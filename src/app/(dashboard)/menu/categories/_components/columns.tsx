@@ -2,7 +2,8 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { CellAction } from "./cell-action"
-import { ToggleStatus } from "./toggle-status"
+import { ToggleStatus } from "@/components/dashboard/toggle-status"
+import { updateDishCategory } from "@/actions/updateDishCategory"
 
 export type DishCategoryColumn = {
   id: string
@@ -25,7 +26,12 @@ export const columns: ColumnDef<DishCategoryColumn>[] = [
   {
     accessorKey: "status",
     header: "Status",
-    cell: ({ row }) => <ToggleStatus id={row.original.id} status={row.original.status}/>
+    cell: ({ row }) => <ToggleStatus status={row.original.status} action={async () => {
+      await updateDishCategory({
+        id: row.original.id,
+        status: !row.original.status
+      })
+    }}/>
   },
   {
     id: "actions",

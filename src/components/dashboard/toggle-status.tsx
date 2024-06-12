@@ -3,19 +3,16 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 // import { toast } from "@/components/ui/use-toast";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { updateDishCategory } from "@/actions/updateDishCategory";
 
 interface ToggleStatus {
-    id: string;
     status: boolean;
+    action: () => Promise<void>;
 }
 
 export const ToggleStatus: React.FC<ToggleStatus> = ({
-    id,
-    status
+    status,
+    action,
 }) => {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
@@ -24,10 +21,11 @@ export const ToggleStatus: React.FC<ToggleStatus> = ({
         try {
           setIsLoading(true)
 
-          await updateDishCategory({
-            id,
-            status: !status
-          })
+          await action()
+        //   await updateDishCategory({
+        //     id,
+        //     status: !status
+        //   })
         //   toast({
         //     description: "Status alterado!"
         //   });

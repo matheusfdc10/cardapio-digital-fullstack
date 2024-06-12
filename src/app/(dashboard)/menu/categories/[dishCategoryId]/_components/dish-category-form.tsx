@@ -18,6 +18,9 @@ import { AlertModal } from "@/components/modals/alert-modal";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { createDishCategory } from "@/actions/createDishCategory";
+import { updateDishCategory } from "@/actions/updateDishCategory";
+import { cn } from "@/lib/utils";
+import { deleteDishCategory } from "@/actions/deleteDishCategory";
 
 const formSchema = z.object({
     name: z.string().min(1, {
@@ -56,7 +59,10 @@ const DishCategoryForm: React.FC<DishCategoryFormProps> = ({
     const onSubmit = async (data: DishCategoryFormValues) => {
         try {
             if (initialDate) {
-                // await axios.patch(`/api/category/${initialDate.id}`, data);
+                await updateDishCategory({
+                    id: initialDate.id,
+                    ...data
+                })
             } else {
                 await createDishCategory(data);
             }
@@ -77,20 +83,21 @@ const DishCategoryForm: React.FC<DishCategoryFormProps> = ({
     }
 
     const onDelete = async () => {
-        // try {
-        //     await axios.delete(`/api/category/${initialDate?.id}`);
-        //     router.refresh();
-        //     toast({
-        //         description: "Categoria deletada",
-        //     });
-        //     router.push(`/categories`);
-        // } catch(error) {
-        //     toast({
-        //         variant: "destructive",
-        //         // title: "Email ou senha inválido!",
-        //         description: "Algo deu errado.",
-        //     });
-        // }
+        if (!initialDate?.id) return
+        try {
+            await deleteDishCategory(initialDate.id)
+            // router.refresh();
+            // toast({
+            //     description: "Categoria deletada",
+            // });
+            router.push(`/menu/categories`);
+        } catch(error) {
+            // toast({
+            //     variant: "destructive",
+            //     // title: "Email ou senha inválido!",
+            //     description: "Algo deu errado.",
+            // });
+        }
     }
 
     const handleCancel = () => {
@@ -100,7 +107,7 @@ const DishCategoryForm: React.FC<DishCategoryFormProps> = ({
     return (
         <div className="space-y-4 pt-2">
             <AlertModal
-                titile={`Tem certeza em excluir a categoria ${initialDate?.name}?`}
+                titile={`Excluir a categoria ${initialDate?.name}?`}
                 description="Essa ação não pode ser desfeita"
                 isOpen={open}
                 onClose={()=>setOpen(false)}
@@ -163,7 +170,10 @@ const DishCategoryForm: React.FC<DishCategoryFormProps> = ({
                                                 checked={field.value}
                                                 onCheckedChange={field.onChange}
                                             />
-                                            <Label className={field.value ? "text-green-500" : "text-red-500"}>
+                                            <Label className={cn(
+                                                "rounded-2xl text-white font-medium py-1 px-3 transition",
+                                                field.value ? "bg-emerald-500" : "bg-red-500"
+                                            )}>
                                                 {field.value ? 'Ativo' : 'Inativo'}
                                             </Label>
                                         </div>

@@ -22,8 +22,8 @@ const itens = [
 
 
 const List = () => {
-    const params = usePathname()
-    const link = `/${params.split("/")[1]}`
+    const params = usePathname();
+    const link = params.split("/")[1];
 
     return (
         <ol className="space-y-1 transition">
@@ -34,7 +34,7 @@ const List = () => {
                     textHint={item.textHint}
                     link={item.link}
                     icon={item.icon}
-                    isActive={link === item.link}
+                    isActive={link == item.link.split("/")[1]}
                 />
             ))}
         </ol>

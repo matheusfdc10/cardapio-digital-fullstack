@@ -11,8 +11,6 @@ import { useState } from "react";
 import { ReoderModal, ReoderType } from "@/components/modals/reoder-modal";
 import { updateManyDishCategories } from "@/actions/updateManyDishCategories";
 import { DishCategoryType } from "@/data/dishCategory";
-// import { ReoderModal, ReoderType } from "@/components/modals/ReoderModal";
-// import axios from "axios";
 // import { toast } from "@/components/ui/use-toast";
 
 interface DishCategoriesClientProps {
