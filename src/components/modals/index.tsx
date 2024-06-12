@@ -1,7 +1,7 @@
 'use client'
 
 import { X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 interface ModalProps {
     title: string;
@@ -18,15 +18,6 @@ const Modal: React.FC<ModalProps> = ({
     title,
     description
 }) => {
-    const [isMounted, setIsMounted] = useState(false);
-    
-    useEffect(() => {
-        setIsMounted(true)
-    }, [])
-    
-    if (!isMounted) {
-        return null;
-    }
 
     useEffect(() => {
         const body = document.getElementsByTagName("body");
@@ -36,6 +27,8 @@ const Modal: React.FC<ModalProps> = ({
             body[0].classList.remove("overflow-hidden");
         }
     }, []);
+
+    if (!isOpen) return null;
 
     return (
         <div className='fixed z-40 w-screen h-screen top-0 left-0 right-0'>
