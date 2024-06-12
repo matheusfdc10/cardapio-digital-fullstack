@@ -1,0 +1,195 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+model User {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  name      String?
+  email     String?    @unique
+  password  String?
+  image     String?
+  role      UserRole   @default(USER)
+  orders    Order[]
+  addresses Address[]
+  accounts  Account[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.String
+  access_token      String? @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.String
+  session_state     String?
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  @@unique([provider, providerAccountId])
+}
+
+model Restaurant {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  logo        String?
+  phone       String?
+  whatsapp    String?
+  email       String?
+  address     Address? @relation(fields: [addressId], references: [id])
+  addressId   String?  @db.ObjectId @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Address {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  streetAddress String
+  number        Int
+  complement    String?
+  neighborhood  String
+  city          String
+  state         String
+  zipCode       Int
+  country       String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  user          User?       @relation(fields: [userId], references: [id])
+  userId        String?     @db.ObjectId
+  restaurant    Restaurant?
+}
+
+model DishCategory {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  order       Int
+  status      Boolean  @default(true)
+  dishes      Dish[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Dish {
+  id                    String                @id @default(auto()) @map("_id") @db.ObjectId
+  name                  String
+  description           String?
+  image                 String?
+  price                 Float
+  status                Boolean               @default(true)
+  category              DishCategory          @relation(fields: [categoryId], references: [id])
+  categoryId            String                @db.ObjectId
+  additionalCategories  AdditionalCategory[]  @relation(fields: [additionalCategoryIds], references: [id])
+  additionalCategoryIds String[]              @db.ObjectId
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
+}
+
+model AdditionalCategory {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  order       Int
+  status      Boolean       @default(true)
+  isRequired  Boolean
+  maxQtdItems Int           @default(0)
+  additions   Additional[]  @relation(fields: [additionIds], references: [id])
+  additionIds String[]      @db.ObjectId
+  dishes      Dish[]        @relation(fields: [dishIds], references: [id])
+  dishIds     String[]      @db.ObjectId
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Additional {
+  id          String                @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  price       Float
+  status      Boolean               @default(true)
+  categories  AdditionalCategory[]  @relation(fields: [categoryIds], references: [id])
+  categoryIds String[]              @db.ObjectId
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+}
+
+enum OrderStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELED
+}
+
+model Order {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  user        User        @relation(fields: [userId], references: [id])
+  userId      String      @db.ObjectId
+  items       OrderItem[]
+  totalAmount Float
+  status      OrderStatus @default(PENDING)
+  payment     Payment?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model OrderItem {
+  id          String               @id @default(auto()) @map("_id") @db.ObjectId
+  order       Order                @relation(fields: [orderId], references: [id])
+  orderId     String               @db.ObjectId
+  dishId      String               @db.ObjectId
+  name        String
+  description String?
+  quantity    Int
+  price       Float
+  additions   OrderItemAdditional[]
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+}
+
+model OrderItemAdditional {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  orderItem   OrderItem    @relation(fields: [orderItemId], references: [id])
+  orderItemId String       @db.ObjectId
+  additionalId String      @db.ObjectId
+  name        String
+  quantity    Int
+  price       Float
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+model Payment {
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  order        Order       @relation(fields: [orderId], references: [id])
+  orderId      String      @db.ObjectId @unique
+  amount       Float
+  method       String
+  status       PaymentStatus @default(PENDING)
+  transactionId String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}

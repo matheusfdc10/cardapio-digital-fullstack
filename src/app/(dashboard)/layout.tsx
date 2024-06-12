@@ -1,0 +1,29 @@
+import { auth } from "@/auth";
+import Sidebar from "@/components/dashboard/sidebar";
+import { UserRole } from "@prisma/client";
+import { redirect } from "next/navigation";
+
+interface DashboardLayoutProps {
+    children: React.ReactNode;
+}
+
+const DashboardLayout: React.FC<DashboardLayoutProps> = async ({
+    children
+}) => {
+    const session = await auth();
+
+    if (session?.user.role !== UserRole.ADMIN) {
+        redirect("/")
+    }
+
+    return (
+        <main className="h-full">
+            <Sidebar />
+            <div className="pl-14 sm:pl-60 h-ful">
+                {children}
+            </div>
+        </main>
+    );
+}
+ 
+export default DashboardLayout;
