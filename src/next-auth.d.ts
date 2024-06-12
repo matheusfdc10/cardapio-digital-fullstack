@@ -6,10 +6,10 @@ export type ExtendeUser = DefaultSession["user"] & {
 }
 
 declare module "next-auth" {
-    interface Session {
-      user: ExtendeUser;
+  interface Session {
+    user: ExtendeUser;
 
-    }
+  }
 }
 
 import { JWT } from "next-auth/jwt"
