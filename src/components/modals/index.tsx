@@ -1,7 +1,7 @@
 'use client'
 
 import { X } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 interface ModalProps {
     title: string;
@@ -18,8 +18,15 @@ const Modal: React.FC<ModalProps> = ({
     title,
     description
 }) => {
-
-    if (!isOpen) return null;
+    const [isMounted, setIsMounted] = useState(false);
+    
+    useEffect(() => {
+        setIsMounted(true)
+    }, [])
+    
+    if (!isMounted) {
+        return null;
+    }
 
     useEffect(() => {
         const body = document.getElementsByTagName("body");
