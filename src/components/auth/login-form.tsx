@@ -49,7 +49,7 @@ export const LoginForm = () => {
                     // }
                 })
                 .catch((err) => {
-                    console.log(err)
+                    // console.log(err)
                     setError("Algo deu errado")
                 })
         })
@@ -108,7 +108,7 @@ export const LoginForm = () => {
                                         asChild
                                         className="px-0 font-normal"
                                     >
-                                        <Link href="/auth/reset">
+                                        <Link href="/">
                                             Esqueceu sua senha?
                                         </Link>
                                     </Button>

@@ -32,7 +32,7 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
         return { success: "Logado!" }
     } catch(error) {
         if (error instanceof AuthError) {
-            console.log("EEERRRORRR", error.type)
+            // console.log("EEERRRORRR", error.type)
             switch (error.type) {
                 case "CredentialsSignin":
                     return { error: "Email ou senha inválidos" }
