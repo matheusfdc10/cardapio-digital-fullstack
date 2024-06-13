@@ -34,6 +34,7 @@ export default auth((req) => {
         return Response.redirect(new URL("/", nextUrl))
     }
 
+    
     return null;
 })
 
