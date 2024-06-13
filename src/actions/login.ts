@@ -29,7 +29,6 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
             redirectTo: redirect!,
         })
 
-        return { success: "Logado!" }
     } catch(error) {
         if (error instanceof AuthError) {
             // console.log("EEERRRORRR", error.type)
