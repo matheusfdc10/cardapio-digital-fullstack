@@ -34,7 +34,7 @@ export default {
       }
     })
   ],
-  // trustHost: true
+  trustHost: true,
   // logger: {
   //   error(code, ...message) {
   //     console.error(code, message)
