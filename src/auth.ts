@@ -35,6 +35,8 @@ export const {
       
         //     const existingUser = await getUserById(user.id)
 
+
+        //     return true
         //     if(!existingUser) return false;
       
         //     return true;
@@ -64,6 +66,7 @@ export const {
             return token;
         },
     },
+    // trustHost: true,
     adapter: PrismaAdapter(db),
     session: { strategy: "jwt" },
     // debug: true,

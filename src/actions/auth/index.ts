@@ -6,6 +6,7 @@ import { DEFAULT_LOGIN_REDIRECT_ADMIN, DEFAULT_LOGIN_REDIRECT_USER } from "@/rou
 import { LoginSchema, RegisterSchema } from "@/schemas"
 import { UserRole } from "@prisma/client";
 import { AuthError } from "next-auth";
+import { redirect } from "next/navigation";
 import { z } from "zod"
 
 export const login = async (values: z.infer<typeof LoginSchema>) => {
@@ -20,16 +21,17 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
 
         const user = await getUserByEmail(email);
 
-        const redirect = user?.role === UserRole.ADMIN ? DEFAULT_LOGIN_REDIRECT_ADMIN : DEFAULT_LOGIN_REDIRECT_USER;
+        const redirectPath = user?.role === UserRole.ADMIN ? DEFAULT_LOGIN_REDIRECT_ADMIN : DEFAULT_LOGIN_REDIRECT_USER;
         
         await signIn("credentials", {
             email,
             password,
-            redirect: !!user,
-            redirectTo: redirect!,
+            redirect: false
         })
 
-        return { success: "Logado!" }
+        redirect(redirectPath)
+
+        // return { success: "Logado!" }
     } catch(error) {
         if (error instanceof AuthError) {
             console.log("EEERRRORRR", error.type)
@@ -87,7 +89,13 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
 }
 
 export const logout = async (redirectUrl?: string) => {
-    await signOut({
-        redirectTo: redirectUrl
-    })
+    try {
+        await signOut({
+            redirect: false
+        })
+        
+        redirect(redirectUrl || '/')
+    } catch(error) {
+        throw error;
+    }
 }
