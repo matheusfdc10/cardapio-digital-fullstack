@@ -2,12 +2,18 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-// import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
+
+type Response = {
+    success?: string;
+    error?: string;
+    data: any;
+}
 
 interface ToggleStatus {
     status: boolean;
-    action: () => Promise<void>;
+    action: () => Promise<Response>;
 }
 
 export const ToggleStatus: React.FC<ToggleStatus> = ({
@@ -21,20 +27,27 @@ export const ToggleStatus: React.FC<ToggleStatus> = ({
         try {
           setIsLoading(true)
 
-          await action()
-        //   await updateDishCategory({
-        //     id,
-        //     status: !status
-        //   })
-        //   toast({
-        //     description: "Status alterado!"
-        //   });
+          const response = await action()
+
+          if (response.success) {
+            toast({
+                description: "Status alterado!"
+            });
+          }
+
+          if (response.error) {
+            toast({
+                variant: 'destructive',
+                description: 'Não foi possível alterar status'
+            });
+          }
+
           router.refresh();
         } catch(error) {
-        //   toast({
-        //     variant: "destructive",
-        //     description: "Algo deu errado."
-        //   })
+          toast({
+            variant: "destructive",
+            description: "Algo deu errado."
+          })
         } finally {
           setIsLoading(false)
         }

@@ -1,4 +1,4 @@
-import Container from "@/components/dashboard/container";
+import Container from "@/components/admin/container";
 import Navbar from "./_components/navbar";
 
 interface MenuLayoutProps {

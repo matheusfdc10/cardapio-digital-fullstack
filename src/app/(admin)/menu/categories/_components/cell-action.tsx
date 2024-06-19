@@ -1,43 +1,45 @@
 'use client'
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { DishCategoryColumn } from "./columns"
 import { Button } from "@/components/ui/button";
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-// import { toast } from "@/components/ui/use-toast";
+import { useState, useTransition } from "react";
 import { AlertModal } from "@/components/modals/alert-modal";
-import { deleteDishCategory } from "@/actions/deleteDishCategory";
+import { deleteDishCategory } from "@/actions/admin/dish-category";
+import FormModal from "./form-modal";
+import { DishCategoryType } from "@/types";
+import Modal from "@/components/modals";
+import { toast } from "@/components/ui/use-toast";
 
 interface CellActionProps {
-    data: DishCategoryColumn;
+    data: DishCategoryType;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({
     data
 }) => {
     const router = useRouter();
-    const [loading, setLoading] = useState(false);
+    const [isPending, startTransition] = useTransition();
     const [open, setOpen] = useState(false);
+    const [openForm, setOpenForm] = useState(false);
 
-    const onDelete = async () => {
-        try {
-            setLoading(true)
-            await deleteDishCategory(data.id);
-            // toast({
-            //     description: "Categoria excluida.",
-            // });
-            router.refresh();
-            setOpen(false);
-        } catch(error) {
-            // toast({
-            //     variant: "destructive",
-            //     description: "Algo deu errado.",
-            // });
-        } finally {
-            setLoading(false);
-        }
+    const onDelete = () => {
+        startTransition(async () => {
+            try {
+                await deleteDishCategory(data.id);
+                toast({
+                    description: "Categoria excluida.",
+                });
+                router.refresh();
+                setOpen(false);
+            } catch(error) {
+                toast({
+                    variant: "destructive",
+                    description: "Algo deu errado.",
+                });
+            }
+        })
     }
 
     return (
@@ -48,8 +50,20 @@ export const CellAction: React.FC<CellActionProps> = ({
                 isOpen={open}
                 onClose={() => setOpen(false)}
                 onConfirm={onDelete}
-                loading={loading}
+                loading={isPending}
             />
+            <Modal
+                title="Editar categoria"
+                description="Editar uma categoria"
+                maxWidth={800}
+                onClose={() => setOpenForm(false)}
+                isOpen={openForm}
+            >
+                <FormModal
+                    initialDate={data}
+                    onClose={() => setOpenForm(false)}
+                />
+            </Modal>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="h-8 w-8 p-0">
@@ -61,7 +75,7 @@ export const CellAction: React.FC<CellActionProps> = ({
                     <DropdownMenuLabel>
                         Ações
                     </DropdownMenuLabel>
-                    <DropdownMenuItem onClick={() => router.push(`/menu/categories/${data.id}`)}>
+                    <DropdownMenuItem onClick={() => setOpenForm(true)}>
                         <Edit className="mr-2 h-4 w-4" />
                         Atualizar
                     </DropdownMenuItem>

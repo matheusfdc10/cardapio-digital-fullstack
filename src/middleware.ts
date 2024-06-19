@@ -1,43 +1,44 @@
-import NextAuth from "next-auth";
-import authConfig from "@/auth.config";
 import {
     DEFAULT_LOGIN_REDIRECT_ADMIN,
     DEFAULT_LOGIN_REDIRECT_USER,
     apiAuthPrefix,
     authRoutes,
     publicRoutes,
+    privateRoutes
 } from "@/routes";
 
-const { auth } = NextAuth(authConfig);
+import { UserRole } from "@prisma/client";
 
+import { auth as middleware } from "@/auth"
 
-export default auth((req) => {
+export default middleware((req) => {
     const { nextUrl } = req;
-    const isLoggedIn = !!req.auth;
-
+    const auth = req.auth;
+    const isLoggedIn = !!auth;
+    const isAdmin = isLoggedIn && (auth.user.role == UserRole.ADMIN);
     const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
     const isPublickRoute = publicRoutes.includes(nextUrl.pathname);
+    const isPrivateRoute = privateRoutes.includes(nextUrl.pathname);
     const isAuthRoute = authRoutes.includes(nextUrl.pathname);
-
+    
     if (isApiAuthRoute) {
-        return null;
+        return
     }
 
     if (isAuthRoute) {
         if (isLoggedIn) {
-            return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT_USER, nextUrl))
+            const redirectUrl = isAdmin ? DEFAULT_LOGIN_REDIRECT_ADMIN : DEFAULT_LOGIN_REDIRECT_USER;
+            return Response.redirect(new URL(redirectUrl, nextUrl))
         }
-        return null;
     }
 
-    if (!isLoggedIn && !isPublickRoute) {
+    if (!isLoggedIn && isPrivateRoute) {
         return Response.redirect(new URL("/", nextUrl))
     }
-
-    
-    return null;
 })
 
-export const config = {
-    matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)'],
-}
+
+// export const config = {
+//     matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)'],
+//     // matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+// }

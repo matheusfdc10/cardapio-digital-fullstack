@@ -18,6 +18,7 @@ model User {
   email     String?    @unique
   password  String?
   image     String?
+  emailVerified DateTime?
   role      UserRole   @default(USER)
   orders    Order[]
   addresses Address[]

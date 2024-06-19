@@ -1,18 +1,17 @@
 import bcrypt from "bcryptjs";
 import type { NextAuthConfig } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
+import Google from "next-auth/providers/google";
 import { LoginSchema } from "@/schemas"
 import { getUserByEmail } from "@/data/user";
 
 export default {
   providers: [
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
     Credentials({
-      id: 'credentials',
-      name: 'Credentials',
-      credentials: {
-        email: { label: "email" },
-        password: { label: "password", type: "password" },
-      },
       async authorize(credentials) {
         const validatedFields = LoginSchema.safeParse(credentials);
 
@@ -34,7 +33,7 @@ export default {
       }
     })
   ],
-  trustHost: true,
+  // trustHost: true,
   // logger: {
   //   error(code, ...message) {
   //     console.error(code, message)

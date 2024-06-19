@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import Sidebar from "@/components/dashboard/sidebar";
+import Sidebar from "@/components/admin/sidebar";
 import { UserRole } from "@prisma/client";
 import { redirect } from "next/navigation";
 

@@ -3,8 +3,8 @@
 import { FcGoogle } from "react-icons/fc"
 import { FaGithub } from "react-icons/fa"
 import { Button } from "@/components/ui/button";
-// import { signIn } from "next-auth/react";
-// import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
+import { signIn } from "next-auth/react";
+import { DEFAULT_LOGIN_REDIRECT_USER } from "@/routes";
 // import { useSearchParams } from "next/navigation";
 
 
@@ -13,6 +13,9 @@ export const Social = () => {
     // const callbackUrl = searchParams.get("callbackUrl")?.toString()
 
     const onClick = (provider: "google" | "github") => {
+        signIn(provider, {
+            callbackUrl: DEFAULT_LOGIN_REDIRECT_USER
+        })
         // signIn(provider, {
         //     callbackUrl: callbackUrl || DEFAULT_LOGIN_REDIRECT
         // })

@@ -1,14 +1,16 @@
 'use client'
 
+import { cn } from '@/lib/utils';
 import { X } from 'lucide-react';
 import { useEffect } from 'react';
 
 interface ModalProps {
-    title: string;
+    title?: string;
     description?: string;
     isOpen?: boolean;
     onClose: () => void;
     children: React.ReactNode;
+    maxWidth?: number;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -16,8 +18,19 @@ const Modal: React.FC<ModalProps> = ({
     onClose,
     children,
     title,
-    description
+    description,
+    maxWidth
 }) => {
+
+    const onChange = () => {
+        onClose();
+    }
+
+    const handleOutsideClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        if (e.target === e.currentTarget) {
+            onClose();
+        }
+    };
 
     useEffect(() => {
         const body = document.getElementsByTagName("body");
@@ -33,10 +46,11 @@ const Modal: React.FC<ModalProps> = ({
     return (
         <div className='fixed z-40 w-screen h-screen top-0 left-0 right-0'>
             <div 
-                className='relative w-full h-full bg-background/80 backdrop-blur-sm'
+                className='relative w-full h-full bg-zinc-900/50 backdrop-blur-sm'
             >
                 <div className='fixed inset-0 z-10 overflow-y-auto'>
                     <div
+                        onClick={handleOutsideClick}
                         className='
                             flex
                             min-h-full
@@ -44,11 +58,17 @@ const Modal: React.FC<ModalProps> = ({
                             justify-center
                             px-4
                             py-8
-                            text-center
-                            sm:px-0
                         '
                     >   
-                        <div className='relative z-50 p-6 bg-white max-w-lg shadow-md border rounded-lg py-6 w-full'>
+                        <div className={cn(
+                            `relative z-50 p-6 bg-white shadow-md border rounded-lg py-6 w-full`,
+                            maxWidth ? '' : 'max-w-lg'
+
+                        )}
+                            style={{
+                                maxWidth: `${maxWidth}px`
+                            }}
+                        >
                             <div 
                                 className="
                                     absolute 
@@ -68,20 +88,24 @@ const Modal: React.FC<ModalProps> = ({
                                         text-neutral-950 
                                         hover:text-neutral-950/75 
                                     "
-                                    onClick={onClose}
+                                    onClick={onChange}
                                 >
-                                    <X className="h-5 w-5" aria-hidden="true" />
+                                    <X className="h-5 w-5"  aria-hidden="true" />
                                 </button>
                             </div>
-                            <div className='flex flex-col space-y-1.5 text-center sm:text-left mb-4'>
-                                <h2 className="text-lg font-semibold leading-none tracking-tight">
-                                    {title}
-                                </h2>
-                                <p className="text-sm text-muted-foreground">
-                                    {description}
-                                </p>
+                            {(title || description) && (
+                                <div className='flex flex-col space-y-1.5 text-center sm:text-left mb-4'>
+                                    <h2 className="text-xl font-semibold leading-none tracking-tight">
+                                        {title}
+                                    </h2>
+                                    <p className="text-sm text-muted-foreground">
+                                        {description}
+                                    </p>
+                                </div>
+                            )}
+                            <div>
+                                {children}
                             </div>
-                            {children}
                         </div>
                     </div>
                 </div>

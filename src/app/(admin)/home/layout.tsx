@@ -1,4 +1,4 @@
-import Container from "@/components/dashboard/container";
+import Container from "@/components/admin/container";
 
 interface HomePageProps {
     children: React.ReactNode;

@@ -8,6 +8,16 @@ export const publicRoutes = [
 ]
 
 /**
+ * An array of routes that are private to the public
+ * These routers is require authentication
+ * @type {string[]}
+ */
+export const privateRoutes = [
+    "/home",
+    "/menu"
+]
+
+/**
  * An array of routes that are used for authentication
  * @type {string[]}
  */
