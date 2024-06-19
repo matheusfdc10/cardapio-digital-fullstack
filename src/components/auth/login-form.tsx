@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
+import { useRouter } from "next/navigation";
 
 
 export const LoginForm = () => {
@@ -21,6 +22,7 @@ export const LoginForm = () => {
     // const urlError = searchParams.get('error') === 'OAuthAccountNotLinked'
     //     ? "Email already in use with diferent provider!"
     //     : "";
+    const router = useRouter()
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
     const [isPending, startTransition] = useTransition();
@@ -44,9 +46,10 @@ export const LoginForm = () => {
                         form.reset();
                         setError(data?.error)
                     }
-                    // if (data?.success) {
-                    //     setSuccess(data?.success)
-                    // }
+                    if (data?.success && data.pathUrl) {
+                        setSuccess(data.success)
+                        router.push(data.pathUrl)
+                    }
                 })
                 .catch((err) => {
                     // console.log(err)

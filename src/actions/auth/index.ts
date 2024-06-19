@@ -23,15 +23,13 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
 
         const redirectPath = user?.role === UserRole.ADMIN ? DEFAULT_LOGIN_REDIRECT_ADMIN : DEFAULT_LOGIN_REDIRECT_USER;
         
-        await signIn("credentials", {
+        const teste = await signIn("credentials", {
             email,
             password,
             redirect: false
         })
 
-        redirect(redirectPath)
-
-        // return { success: "Logado!" }
+        return { success: "Logado!" , pathUrl: redirectPath}
     } catch(error) {
         if (error instanceof AuthError) {
             console.log("EEERRRORRR", error.type)
@@ -93,8 +91,10 @@ export const logout = async (redirectUrl?: string) => {
         await signOut({
             redirect: false
         })
-        
-        redirect(redirectUrl || '/')
+
+        // redirect(redirectUrl || '/')
+
+        return { success: "Saiu" }
     } catch(error) {
         throw error;
     }
