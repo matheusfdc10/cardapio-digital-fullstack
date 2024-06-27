@@ -1,81 +1,70 @@
 'use client'
 
-import { createDish, deleteDish, updateDish } from "@/actions/admin/dish";
-import ImageUpload from "@/components/image-upload";
+import { createAdditionalCategory, deleteAdditionalCategory, updateAdditionalCategory } from "@/actions/admin/additional-category";
 import { AlertModal } from "@/components/modals/alert-modal";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
-import { DishSchema } from "@/schemas/dish";
-import { DishType } from "@/types";
+import { AdditionalCategorySchema } from "@/schemas/additional-category";
+import { AdditionalCategoryType } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import SelectMult from "react-select";
-import { getDishCategories } from "@/actions/admin/dish-category";
-import { getAdditionalCategories } from "@/actions/admin/additional-category";
+import Select from "react-select";
+import { getDishes } from "@/actions/admin/dish";
 
-const formSchema = DishSchema.omit({ id: true, updatedAt:true, createdAt: true });
+const formSchema = AdditionalCategorySchema.omit({ id: true, order:true, updatedAt:true, createdAt: true, description: true });
 
-export type DishFormValues = z.infer<typeof formSchema>;
+export type AdditionalCategoryFormValues = z.infer<typeof formSchema>;
 
 interface FormModalProps {
-    initialDate: DishType | null;
+    initialDate: AdditionalCategoryType | null;
     onClose: () => void;
-    // categories: { value: string, label: string}[];
 }
 
 const FormModal: React.FC<FormModalProps> = ({
     initialDate,
     onClose,
-    // categories
 }) => {
     const router = useRouter();
     const [open, setOpen] = useState(false)
-    const [categories, setCategories] = useState<{ value: string, label: string}[]>([])
-    const [additionalCategories, setAdditionalCategories] = useState<{ value: string, label: string}[]>([])
+    const [dishes, setDishes] = useState<{ value: string, label: string}[]>([])
+    const [additionals, setAdditionals] = useState<{ value: string, label: string}[]>([])
     const [isPending, startTransition] = useTransition();
     
     const action = initialDate ? "Salvar alterações" : "Adicionar";
     
-    const form = useForm<DishFormValues>({
+    const form = useForm<AdditionalCategoryFormValues>({
         resolver: zodResolver(formSchema),
-        defaultValues: initialDate ? {
-            ...initialDate,
-            description: initialDate?.description || "",
-            image: initialDate.image || "",
-            price: parseFloat(String(initialDate.price))
-        } : {
+        defaultValues: initialDate || {
             name: "",
-            description: "",
-            image: "",
-            price: 0,
             status: false,
-            categoryId: "",
-            additionalCategoryIds: [],
+            isRequired: false,
+            maxItems: 0,
+            dishIds: [],
+            additionalIds: []
         },
     })
 
     const isLoading = isPending || form.formState.isSubmitting;
 
-    const onSubmit = async (data: DishFormValues) => {
+    const onSubmit = async (data: AdditionalCategoryFormValues) => {
         try {
             let response = null
 
             if (initialDate) {
-                response = await updateDish({
+                response = await updateAdditionalCategory({
                     id: initialDate.id,
                     ...data
                 })
             } else {
-                response = await createDish(data);
+                response = await createAdditionalCategory(data);
             }
 
             if (response.error) {
@@ -106,7 +95,7 @@ const FormModal: React.FC<FormModalProps> = ({
     const onDelete = async () => {
         if (!initialDate?.id) return
         try {
-            const response = await deleteDish(initialDate.id);
+            const response = await deleteAdditionalCategory(initialDate.id);
 
             if (response.error) {
                 toast({
@@ -135,7 +124,7 @@ const FormModal: React.FC<FormModalProps> = ({
 
     useEffect(() => {
         startTransition(() => {
-            getDishCategories()
+            getDishes()
                 .then(response => {
                     if (response.error) {
                         toast({
@@ -145,36 +134,20 @@ const FormModal: React.FC<FormModalProps> = ({
                     }
     
                     if (response.success) {
-                        setCategories(response.data.map((item => ({
+                        setDishes(response.data.map((item => ({
                             label: item.name,
                             value: item.id
                         }))))
                     }
                 })
-    
-            getAdditionalCategories()
-                .then(response => {
-                    if (response.error) {
-                        toast({
-                            variant: "destructive",
-                            description: response.error,
-                        })
-                    }
-    
-                    if (response.success) {
-                        setAdditionalCategories(response.data.map((item => ({
-                            label: item.name,
-                            value: item.id
-                        }))))
-                    }
-                })
+
         })
     }, [])
 
     return (
         <>
             <AlertModal
-                titile={`Excluir o prato ${initialDate?.name}?`}
+                titile={`Excluir a categoria ${initialDate?.name}?`}
                 description="Essa ação não pode ser desfeita"
                 isOpen={open}
                 onClose={() => setOpen(false)}
@@ -208,15 +181,15 @@ const FormModal: React.FC<FormModalProps> = ({
                             />
                             <FormField 
                                 control={form.control}
-                                name="price"
+                                name="maxItems"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Preço</FormLabel>
+                                        <FormLabel>Maxímo de adicionais</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="number"
                                                 disabled={isLoading}
-                                                placeholder="0.00"
+                                                placeholder="0"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -225,42 +198,72 @@ const FormModal: React.FC<FormModalProps> = ({
                                 )}
                             />
                             <FormField 
-                            control={form.control}
-                            name="categoryId"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Categoria</FormLabel>
-                                    <SelectMult
-                                        value={categories.filter((item) => field.value.includes(item.value))}
-                                        onChange={(selectedOptions) => {
-                                            field.onChange(selectedOptions?.value);
-                                        }}
-                                        placeholder="Selecione categoria"
-                                        options={categories}
-                                        isDisabled={isLoading}
-                                        classNames={{
-                                            
-                                        }}
-                                    />
-                                    <FormMessage />
-                                </FormItem>
+                                control={form.control}
+                                name="isRequired"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>É obrigatório</FormLabel>
+                                        <FormControl>
+                                            <div className="flex items-center gap-6 pt-2">
+                                                <Switch
+                                                    disabled={isLoading}
+                                                    checked={field.value}
+                                                    onCheckedChange={field.onChange}
+                                                />
+                                                <Label className={cn(
+                                                    "rounded-2xl text-white font-medium py-1 px-3 transition",
+                                                    field.value ? "bg-emerald-500" : "bg-red-500"
+                                                )}>
+                                                    {field.value ? 'sim' : 'Não'}
+                                                </Label>
+                                            </div>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            {initialDate && (
+                                <FormField 
+                                    control={form.control}
+                                    name="status"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Status</FormLabel>
+                                            <FormControl>
+                                                <div className="flex items-center gap-6 pt-2">
+                                                    <Switch
+                                                        disabled={isLoading}
+                                                        checked={field.value}
+                                                        onCheckedChange={field.onChange}
+                                                    />
+                                                    <Label className={cn(
+                                                        "rounded-2xl text-white font-medium py-1 px-3 transition",
+                                                        field.value ? "bg-emerald-500" : "bg-red-500"
+                                                    )}>
+                                                        {field.value ? 'Ativo' : 'Inativo'}
+                                                    </Label>
+                                                </div>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
                             )}
-                        />
                         </div>
                         <FormField 
                             control={form.control}
-                            name="additionalCategoryIds"
+                            name="dishIds"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Categoria de adicionais</FormLabel>
-                                    <SelectMult
-                                        value={additionalCategories.filter((item) => field.value.includes(item.value))}
+                                    <FormLabel>Pratos</FormLabel>
+                                    <Select
+                                        value={dishes.filter((item) => field.value.includes(item.value))}
                                         onChange={(selectedOptions) => {
                                             const selectedValues = selectedOptions.map((option) => option.value);
                                             field.onChange(selectedValues);
                                         }}
-                                        placeholder="Selecione adicionais"
-                                        options={additionalCategories}
+                                        placeholder="Selecione pratos"
+                                        options={dishes}
                                         isMulti
                                         isDisabled={isLoading}
                                         closeMenuOnSelect={false}
@@ -273,64 +276,25 @@ const FormModal: React.FC<FormModalProps> = ({
                         />
                         <FormField 
                             control={form.control}
-                            name="description"
+                            name="additionalIds"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Descrição</FormLabel>
-                                    <FormControl>
-                                        <Textarea
-                                            disabled={isLoading}
-                                            placeholder="Descrição do prato"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        {initialDate && (
-                            <FormField 
-                                control={form.control}
-                                name="status"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Status</FormLabel>
-                                        <FormControl>
-                                            <div className="flex items-center gap-6 pt-2">
-                                                <Switch
-                                                    disabled={isLoading}
-                                                    checked={field.value}
-                                                    onCheckedChange={field.onChange}
-                                                />
-                                                <Label className={cn(
-                                                    "rounded-2xl text-white font-medium py-1 px-3 transition",
-                                                    field.value ? "bg-emerald-500" : "bg-red-500"
-                                                )}>
-                                                    {field.value ? 'Ativo' : 'Inativo'}
-                                                </Label>
-                                            </div>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        )}
-                        <FormField 
-                            control={form.control}
-                            name="image"
-                            render={({ field }) => (
-                                <FormItem className="pt-2">
-                                    {/* <FormLabel>Imagem</FormLabel> */}
-                                    <FormControl>
-                                        <ImageUpload 
-                                            value={field.value ? [field?.value] : []}
-                                            disabled={isLoading}
-                                            onChange={(url) => field.onChange(url)}
-                                            onRemove={(url) => field.onChange("")}
-                                            amount={1}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
+                                    <FormLabel>Adicionais</FormLabel>
+                                    <Select
+                                        value={additionals.filter((item) => field.value.includes(item.value))}
+                                        onChange={(selectedOptions) => {
+                                            const selectedValues = selectedOptions.map((option) => option.value);
+                                            field.onChange(selectedValues);
+                                        }}
+                                        placeholder="Selecione pratos"
+                                        options={additionals}
+                                        isMulti
+                                        isDisabled={isLoading}
+                                        closeMenuOnSelect={false}
+                                        classNames={{
+                                            
+                                        }}
+                                    />
                                 </FormItem>
                             )}
                         />

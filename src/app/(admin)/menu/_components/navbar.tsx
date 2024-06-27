@@ -11,6 +11,8 @@ import { Command, CommandGroup, CommandItem, CommandList } from "@/components/ui
 const navItems = [
   { label: "Categorias de pratos", url: "/menu/categories" },
   { label: "Pratos", url: "/menu/dishes" },
+  { label: "Categorias de adicionais", url: "/menu/additional-categories" },
+  { label: "Adicionais", url: "/menu/additionals" },
 ];
 
 const Navbar = () => {

@@ -30,7 +30,7 @@ export const getDishes = async (dishCategoryId?: string) => {
                 category: true,
                 additionalCategories: {
                     include: {
-                        additions: {
+                        additionals: {
                             orderBy: {
                                 price: 'asc'
                             }
@@ -68,7 +68,7 @@ export const getDishById = async (id: string) => {
                 category: true,
                 additionalCategories: {
                     include: {
-                        additions: {
+                        additionals: {
                             orderBy: {
                                 price: 'asc'
                             }

@@ -112,9 +112,9 @@ model AdditionalCategory {
   order       Int
   status      Boolean       @default(true)
   isRequired  Boolean
-  maxQtdItems Int           @default(0)
-  additions   Additional[]  @relation(fields: [additionIds], references: [id])
-  additionIds String[]      @db.ObjectId
+  maxItems    Int           @default(0)
+  additionals   Additional[]  @relation(fields: [additionalIds], references: [id])
+  additionalIds String[]      @db.ObjectId
   dishes      Dish[]        @relation(fields: [dishIds], references: [id])
   dishIds     String[]      @db.ObjectId
   createdAt   DateTime      @default(now())
@@ -160,7 +160,7 @@ model OrderItem {
   description String?
   quantity    Int
   price       Float
-  additions   OrderItemAdditional[]
+  additionals OrderItemAdditional[]
   createdAt   DateTime             @default(now())
   updatedAt   DateTime             @updatedAt
 }

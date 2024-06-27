@@ -13,7 +13,7 @@ export const columns: ColumnDef<DishType>[] = [
   },
   {
     header: "N° de adicionais",
-    cell: ({ row }) => <span>{row.original.additionalCategories.length.toString()}</span>
+    cell: ({ row }) => <span>{row.original.additionalCategoryIds.length.toString()}</span>
   },
   {
     // accessorKey: "status",
