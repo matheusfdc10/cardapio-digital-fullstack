@@ -9,17 +9,13 @@ import { columns } from "./columns";
 import { useState, useTransition } from "react";
 import { updateManyDishCategories } from "@/actions/admin/dish-category";
 import FormModal from "./form-modal";
-import { DishCategoryType, DishType } from "@/types";
+import { DishCategoryType } from "@/types";
 import Modal from "@/components/modals";
 import { toast } from "@/components/ui/use-toast";
 import Reorder, { ReorderType } from "@/components/reorder";
 
-interface DishCategoriesClient extends DishCategoryType {
-    dishes: DishType[]
-}
-
 interface DishCategoriesClientProps {
-    data: DishCategoriesClient[]
+    data: DishCategoryType[]
 }
 
 export const DishCategoriesClient: React.FC<DishCategoriesClientProps> = ({
@@ -33,13 +29,23 @@ export const DishCategoriesClient: React.FC<DishCategoriesClientProps> = ({
     const handleSetReoder = (data: ReorderType[]) => {
         startTransition(async () => {
             try {
-                const response = await updateManyDishCategories(data)
-                
-                toast({
-                    description: "Ordem atualizada.",
-                });
 
-                router.refresh();
+                const response = await updateManyDishCategories(data)
+
+                if (response.error) {
+                    toast({
+                        variant: "destructive",
+                        description: response.error,
+                    });
+                }
+
+                if (response.success && response.data) {
+                    toast({
+                        description: response.success,
+                    });
+                    
+                    router.refresh();
+                }
             } catch(error) {
                 toast({
                     variant: "destructive",

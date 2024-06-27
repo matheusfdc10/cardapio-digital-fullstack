@@ -28,21 +28,22 @@ export const ToggleStatus: React.FC<ToggleStatus> = ({
           setIsLoading(true)
 
           const response = await action()
-
-          if (response.success) {
-            toast({
-                description: "Status alterado!"
-            });
-          }
-
+          
           if (response.error) {
             toast({
                 variant: 'destructive',
                 description: 'Não foi possível alterar status'
             });
           }
+          
+          if (response.success) {
+            toast({
+                description: "Status alterado!"
+            });
 
-          router.refresh();
+            router.refresh();
+          }
+
         } catch(error) {
           toast({
             variant: "destructive",

@@ -1,7 +1,5 @@
-"use client";
 
 import { logout } from "@/actions/auth";
-import { useRouter } from "next/navigation";
 
 interface LogoutButtonProps {
     children?: React.ReactNode;
@@ -10,22 +8,21 @@ interface LogoutButtonProps {
 
 export const LogoutButton: React.FC<LogoutButtonProps> = ({
     children,
-    redirectUrl
+    redirectUrl = '/auth/login'
 }) => {
-    const router = useRouter()
-
-    const onClick = () => {
-        logout()
-            .then((response) => {
-                if (response?.success) {
-                    router.push(redirectUrl || "/")
-                }
-            })
-    }
+    const handleAction = logout.bind(null, redirectUrl)
     
     return (
-        <span onClick={onClick} className="cursor-pointer w-full">
-            {children}
-        </span>
+        <form
+            action={handleAction}
+            className="w-full"
+        >
+            <button 
+                type="submit"
+                className="w-full"
+            >
+                {children || 'Sair'}
+            </button>
+        </form>
     )
 }

@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
-import { DishCategorySchema } from "@/schemas";
+import { DishCategorySchema } from "@/schemas/dish-category";
 import { DishCategoryType } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -58,12 +58,6 @@ const FormModal: React.FC<FormModalProps> = ({
                 response = await createDishCategory(data);
             }
 
-            if (response.success) {
-                toast({
-                    description: response.success,
-                });
-            }
-
             if (response.error) {
                 toast({
                     variant: 'destructive',
@@ -71,8 +65,15 @@ const FormModal: React.FC<FormModalProps> = ({
                 });
             }
 
-            router.refresh()
-            onClose()
+            if (response.success) {
+                toast({
+                    description: response.success,
+                });
+
+                router.refresh()
+                onClose()
+            }
+            
         } catch(error) {
             toast({
                 variant: "destructive",
@@ -85,13 +86,25 @@ const FormModal: React.FC<FormModalProps> = ({
     const onDelete = async () => {
         if (!initialDate?.id) return
         try {
-            await deleteDishCategory(initialDate.id)
-            toast({
-                description: "Categoria deletada",
-            });
-            router.refresh();
+            const response = await deleteDishCategory(initialDate.id);
+
+            if (response.error) {
+                toast({
+                    variant: "destructive",
+                    description: response.error,
+                });
+            }
+
+            if (response.success) {
+                toast({
+                    description: response.success,
+                });
+
+                router.refresh();
+                onClose();
+            }
+
             setOpen(false)
-            onClose();
         } catch(error) {
             toast({
                 variant: "destructive",

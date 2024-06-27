@@ -3,10 +3,10 @@
 import { signIn, signOut } from "@/auth";
 import { createUser, getUserByEmail } from "@/data/user";
 import { DEFAULT_LOGIN_REDIRECT_ADMIN, DEFAULT_LOGIN_REDIRECT_USER } from "@/routes";
-import { LoginSchema, RegisterSchema } from "@/schemas"
+import { LoginSchema } from "@/schemas/login"
+import { RegisterSchema } from "@/schemas/register";
 import { UserRole } from "@prisma/client";
 import { AuthError } from "next-auth";
-import { redirect } from "next/navigation";
 import { z } from "zod"
 
 export const login = async (values: z.infer<typeof LoginSchema>) => {
@@ -21,18 +21,18 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
 
         const user = await getUserByEmail(email);
 
-        const redirectPath = user?.role === UserRole.ADMIN ? DEFAULT_LOGIN_REDIRECT_ADMIN : DEFAULT_LOGIN_REDIRECT_USER;
+        const redirect = user?.role === UserRole.ADMIN ? DEFAULT_LOGIN_REDIRECT_ADMIN : DEFAULT_LOGIN_REDIRECT_USER;
         
-        const teste = await signIn("credentials", {
+        await signIn("credentials", {
             email,
             password,
-            redirect: false
+            redirect: !!user,
+            redirectTo: redirect!,
         })
-
-        return { success: "Logado!" , pathUrl: redirectPath}
+        
     } catch(error) {
         if (error instanceof AuthError) {
-            console.log("EEERRRORRR", error.type)
+
             switch (error.type) {
                 case "CredentialsSignin":
                     return { error: "Email ou senha inválidos" }
@@ -86,16 +86,12 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
     }
 }
 
-export const logout = async (redirectUrl?: string) => {
+export const logout = async (redirectUrl: string) => {
     try {
         await signOut({
-            redirect: false
+            redirectTo: redirectUrl
         })
-
-        // redirect(redirectUrl || '/')
-
-        return { success: "Saiu" }
     } catch(error) {
-        throw error;
+        throw error
     }
 }

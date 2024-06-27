@@ -6,14 +6,14 @@ import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { AlertModal } from "@/components/modals/alert-modal";
-import { deleteDishCategory } from "@/actions/admin/dish-category";
 import FormModal from "./form-modal";
-import { DishCategoryType } from "@/types";
+import { DishType } from "@/types";
 import Modal from "@/components/modals";
 import { toast } from "@/components/ui/use-toast";
+import { deleteDish } from "@/actions/admin/dish";
 
 interface CellActionProps {
-    data: DishCategoryType;
+    data: DishType;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({
@@ -27,7 +27,7 @@ export const CellAction: React.FC<CellActionProps> = ({
     const onDelete = () => {
         startTransition(async () => {
             try {
-                const response = await deleteDishCategory(data.id);
+                const response = await deleteDish(data.id);
 
                 if (response.error) {
                     toast({
@@ -42,9 +42,8 @@ export const CellAction: React.FC<CellActionProps> = ({
                     });
 
                     router.refresh();
+                    setOpen(false);
                 }
-                
-                setOpen(false);
             } catch(error) {
                 toast({
                     variant: "destructive",
@@ -57,7 +56,7 @@ export const CellAction: React.FC<CellActionProps> = ({
     return (
         <>
             <AlertModal
-                titile={`Exluir a categoria ${data.name}?`}
+                titile={`Exluir prato ${data.name}?`}
                 description="Essa ação não pode ser desfeita."
                 isOpen={open}
                 onClose={() => setOpen(false)}
@@ -65,8 +64,8 @@ export const CellAction: React.FC<CellActionProps> = ({
                 loading={isPending}
             />
             <Modal
-                title="Editar categoria"
-                description="Editar uma categoria"
+                title="Editar prato"
+                // description="Editar uma prato"
                 maxWidth={800}
                 onClose={() => setOpenForm(false)}
                 isOpen={openForm}

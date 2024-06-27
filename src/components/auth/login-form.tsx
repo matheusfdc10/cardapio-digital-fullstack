@@ -4,7 +4,7 @@ import { CardWrapper } from "@/components/auth/card-wrapper";
 import { useState, useTransition } from "react";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import { LoginSchema } from "@/schemas";
+import { LoginSchema } from "@/schemas/login";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { login } from "@/actions/auth";
@@ -12,8 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { FormError } from "@/components/form-error";
-import { FormSuccess } from "@/components/form-success";
-import { useRouter } from "next/navigation";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 
 export const LoginForm = () => {
@@ -22,9 +21,7 @@ export const LoginForm = () => {
     // const urlError = searchParams.get('error') === 'OAuthAccountNotLinked'
     //     ? "Email already in use with diferent provider!"
     //     : "";
-    const router = useRouter()
     const [error, setError] = useState<string | undefined>("");
-    const [success, setSuccess] = useState<string | undefined>("");
     const [isPending, startTransition] = useTransition();
 
     const form = useForm<z.infer<typeof LoginSchema>>({
@@ -37,7 +34,6 @@ export const LoginForm = () => {
 
     const onSubmit = (values: z.infer<typeof LoginSchema>) => {
         setError("")
-        setSuccess("")
 
         startTransition(() => {
             login(values)
@@ -46,13 +42,8 @@ export const LoginForm = () => {
                         form.reset();
                         setError(data?.error)
                     }
-                    if (data?.success && data.pathUrl) {
-                        setSuccess(data.success)
-                        router.push(data.pathUrl)
-                    }
                 })
-                .catch((err) => {
-                    // console.log(err)
+                .catch(() => {
                     setError("Algo deu errado")
                 })
         })
@@ -121,13 +112,16 @@ export const LoginForm = () => {
                         />
                     </div>
                     <FormError message={error}/>
-                    <FormSuccess message={success}/>
                     <Button
                         type="submit"
                         disabled={isPending}
                         className="w-full"
                     >
-                        Login
+                        {isPending ? (
+                            <AiOutlineLoading3Quarters className="animate-spin" />
+                        ) : 
+                            'Login'
+                        }
                     </Button>
                 </form>
             </Form>

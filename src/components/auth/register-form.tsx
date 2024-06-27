@@ -4,7 +4,7 @@ import { CardWrapper } from "@/components/auth/card-wrapper";
 import { useState, useTransition } from "react";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import { RegisterSchema } from "@/schemas";
+import { RegisterSchema } from "@/schemas/register";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";

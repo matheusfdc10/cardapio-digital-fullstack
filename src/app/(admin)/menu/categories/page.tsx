@@ -1,7 +1,5 @@
-import { toast } from "@/components/ui/use-toast";
 import { DishCategoriesClient } from "./_components/client";
 import { getDishCategories } from "@/actions/admin/dish-category";
-import { redirect } from "next/navigation";
 import ToastError from "@/components/toast-error";
 
 export const revalidate = 0;
