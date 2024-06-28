@@ -286,10 +286,23 @@ export const deleteAdditionalCategory = async (id: string) => {
 
 
         if (additionalCategory?.dishes?.length || additionalCategory?.additionals?.length) {
-            return {
-                data: null,
-                error: "Não é possível excluir uma categoria com pratos e/ou adicionais associados"
-            }
+            await db.additionalCategory.update({
+                where: {
+                    id: additionalCategory.id
+                },
+                data: {
+                    additionals:{
+                        disconnect: additionalCategory.additionalIds?.map((additionalId) => ({
+                            id: additionalId
+                        })),
+                    },
+                    dishes: {
+                        disconnect: additionalCategory.dishIds?.map((dishId) => ({ 
+                            id: dishId
+                        }))
+                    }
+                }
+            });
         }
 
         const deleteAdditionalCategory = await db.additionalCategory.delete({

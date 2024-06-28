@@ -1,25 +1,22 @@
-import { getDishes } from "@/actions/admin/dish";
-
-
+import { getAdditionals } from "@/actions/admin/additional";
 import ToastError from "@/components/toast-error";
-// import { DishClient } from "./_components/client";
+import { AdditionalClient } from "./_components/client";
 
 
 const AdditionalsPage = async () => {
-    const response = await getDishes();
+    const response = await getAdditionals();
 
     if (response.error) {
         return (
             <ToastError
-                errorMessage='Erro ao buscar pratos'
+                errorMessage='Erro ao buscar adicionais'
                 toastMessage={response.error}
             />
         )
     }
 
     return (
-        <div>Addicionis</div>
-        // <DishClient data={response.data} />
+        <AdditionalClient data={response.data} />
     );
 }
  

@@ -13,3 +13,7 @@ export type AdditionalCategoryType = AdditionalCategory & {
     dishes: Dish[]
     additionals: Additional[]
 }
+
+export type AdditionalType = Additional & {
+    categories: AdditionalCategory[]
+}

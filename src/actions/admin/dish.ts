@@ -193,11 +193,7 @@ export const updateDish = async (data: z.infer<typeof DishUpdate>) => {
                 price: data.price,
                 image: data.image,
                 categoryId: data.categoryId,
-                // additionalCategoryIds: {
-                //     set: data.additionalCategoryIds
-                // },
                 additionalCategories: data.additionalCategoryIds ? {
-                    // set: [],
                     disconnect: dish.additionalCategoryIds.map((additionalCategoryId) => ({
                         id: additionalCategoryId
                     })),
@@ -207,11 +203,6 @@ export const updateDish = async (data: z.infer<typeof DishUpdate>) => {
                 } : undefined
             }
         })
-
-        // atualizar adicionalCategory
-        // if (data.additionalCategoryIds.length) {
-
-        // }
 
         return {
             data: updateDish,
@@ -236,7 +227,31 @@ export const deleteDish = async (id: string) => {
             }
         }
 
-        const dish = await db.dish.delete({
+        const dish = await db.dish.findUnique({
+            where: {
+                id
+            },
+            include: {
+                additionalCategories: true
+            }
+        })
+
+        if (dish?.additionalCategories.length) {
+            await db.dish.update({
+                where: {
+                    id
+                },
+                data: {
+                    additionalCategories: {
+                        disconnect: dish.additionalCategoryIds.map((additionalCategoryId) => ({
+                            id: additionalCategoryId
+                        }))
+                    },
+                }
+            })
+        }
+
+        const deleteDish = await db.dish.delete({
             where: {
                 id: id,
             },
@@ -245,7 +260,7 @@ export const deleteDish = async (id: string) => {
         // atualizar adicionalCategory
 
         return {
-            data: dish,
+            data: deleteDish,
             success: 'Deletado com sucesso',
         }
     } catch(error) {

@@ -20,7 +20,7 @@ const Container: React.FC<ContainerProps> = ({
                 <p className="font-medium hidden sm:block text-muted-foreground">
                     {description}
                 </p>
-                <Separator />
+                {/* <Separator /> */}
             </div>
             <div>
                 {children}

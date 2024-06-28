@@ -1,31 +1,32 @@
 'use client'
 
-import { createAdditionalCategory, deleteAdditionalCategory, updateAdditionalCategory } from "@/actions/admin/additional-category";
+import { createAdditional, deleteAdditional, updateAdditional } from "@/actions/admin/additional";
+import ImageUpload from "@/components/image-upload";
 import { AlertModal } from "@/components/modals/alert-modal";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
-import { AdditionalCategorySchema } from "@/schemas/additional-category";
-import { AdditionalCategoryType } from "@/types";
+import { AdditionalType } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import Select from "react-select";
-import { getDishes } from "@/actions/admin/dish";
-import { getAdditionals } from "@/actions/admin/additional";
+import SelectMult from "react-select";
+import { getAdditionalCategories } from "@/actions/admin/additional-category";
+import { AdditionalSchema } from "@/schemas/additional";
 
-const formSchema = AdditionalCategorySchema.omit({ id: true, order:true, updatedAt:true, createdAt: true, description: true });
+const formSchema = AdditionalSchema.omit({ id: true, updatedAt:true, createdAt: true });
 
-export type AdditionalCategoryFormValues = z.infer<typeof formSchema>;
+export type AdditionalFormValues = z.infer<typeof formSchema>;
 
 interface FormModalProps {
-    initialDate: AdditionalCategoryType | null;
+    initialDate: AdditionalType | null;
     onClose: () => void;
 }
 
@@ -35,37 +36,37 @@ const FormModal: React.FC<FormModalProps> = ({
 }) => {
     const router = useRouter();
     const [open, setOpen] = useState(false)
-    const [dishes, setDishes] = useState<{ value: string, label: string}[]>([])
-    const [additionals, setAdditionals] = useState<{ value: string, label: string}[]>([])
+    const [additionalCategories, setAdditionalCategories] = useState<{ value: string, label: string}[]>([])
     const [isPending, startTransition] = useTransition();
     
     const action = initialDate ? "Salvar alterações" : "Adicionar";
     
-    const form = useForm<AdditionalCategoryFormValues>({
+    const form = useForm<AdditionalFormValues>({
         resolver: zodResolver(formSchema),
-        defaultValues: initialDate || {
+        defaultValues: initialDate ? {
+            ...initialDate,
+            price: parseFloat(String(initialDate.price))
+        } : {
             name: "",
+            price: 0,
             status: false,
-            isRequired: false,
-            maxItems: 0,
-            dishIds: [],
-            additionalIds: []
+            categoryIds: [],
         },
     })
 
     const isLoading = isPending || form.formState.isSubmitting;
 
-    const onSubmit = async (data: AdditionalCategoryFormValues) => {
+    const onSubmit = async (data: AdditionalFormValues) => {
         try {
             let response = null
 
             if (initialDate) {
-                response = await updateAdditionalCategory({
+                response = await updateAdditional({
                     id: initialDate.id,
                     ...data
                 })
             } else {
-                response = await createAdditionalCategory(data);
+                response = await createAdditional(data);
             }
 
             if (response.error) {
@@ -96,7 +97,7 @@ const FormModal: React.FC<FormModalProps> = ({
     const onDelete = async () => {
         if (!initialDate?.id) return
         try {
-            const response = await deleteAdditionalCategory(initialDate.id);
+            const response = await deleteAdditional(initialDate.id);
 
             if (response.error) {
                 toast({
@@ -125,7 +126,7 @@ const FormModal: React.FC<FormModalProps> = ({
 
     useEffect(() => {
         startTransition(() => {
-            getDishes()
+            getAdditionalCategories()
                 .then(response => {
                     if (response.error) {
                         toast({
@@ -135,37 +136,19 @@ const FormModal: React.FC<FormModalProps> = ({
                     }
     
                     if (response.success) {
-                        setDishes(response.data.map((item => ({
+                        setAdditionalCategories(response.data.map((item => ({
                             label: item.name,
                             value: item.id
                         }))))
                     }
                 })
-
-            getAdditionals()
-                .then(response => {
-                    if (response.error) {
-                        toast({
-                            variant: "destructive",
-                            description: response.error,
-                        })
-                    }
-
-                    if (response.success) {
-                        setAdditionals(response.data.map((item => ({
-                            label: item.name,
-                            value: item.id
-                        }))))
-                    }
-                })
-
         })
     }, [])
 
     return (
         <>
             <AlertModal
-                titile={`Excluir a categoria ${initialDate?.name}?`}
+                titile={`Excluir adicional ${initialDate?.name}?`}
                 description="Essa ação não pode ser desfeita"
                 isOpen={open}
                 onClose={() => setOpen(false)}
@@ -199,42 +182,17 @@ const FormModal: React.FC<FormModalProps> = ({
                             />
                             <FormField 
                                 control={form.control}
-                                name="maxItems"
+                                name="price"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Maxímo de adicionais</FormLabel>
+                                        <FormLabel>Preço</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="number"
                                                 disabled={isLoading}
-                                                placeholder="0"
+                                                placeholder="0.00"
                                                 {...field}
                                             />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField 
-                                control={form.control}
-                                name="isRequired"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>É obrigatório</FormLabel>
-                                        <FormControl>
-                                            <div className="flex items-center gap-6 pt-2">
-                                                <Switch
-                                                    disabled={isLoading}
-                                                    checked={field.value}
-                                                    onCheckedChange={field.onChange}
-                                                />
-                                                <Label className={cn(
-                                                    "rounded-2xl text-white font-medium py-1 px-3 transition",
-                                                    field.value ? "bg-emerald-500" : "bg-red-500"
-                                                )}>
-                                                    {field.value ? 'sim' : 'Não'}
-                                                </Label>
-                                            </div>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -270,42 +228,18 @@ const FormModal: React.FC<FormModalProps> = ({
                         </div>
                         <FormField 
                             control={form.control}
-                            name="dishIds"
+                            name="categoryIds"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Pratos</FormLabel>
-                                    <Select
-                                        value={dishes.filter((item) => field.value.includes(item.value))}
+                                    <FormLabel>Categoria de adicionais</FormLabel>
+                                    <SelectMult
+                                        value={additionalCategories.filter((item) => field.value.includes(item.value))}
                                         onChange={(selectedOptions) => {
                                             const selectedValues = selectedOptions.map((option) => option.value);
                                             field.onChange(selectedValues);
                                         }}
-                                        placeholder="Selecione pratos"
-                                        options={dishes}
-                                        isMulti
-                                        isDisabled={isLoading}
-                                        closeMenuOnSelect={false}
-                                        classNames={{
-                                            
-                                        }}
-                                    />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField 
-                            control={form.control}
-                            name="additionalIds"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Adicionais</FormLabel>
-                                    <Select
-                                        value={additionals.filter((item) => field.value.includes(item.value))}
-                                        onChange={(selectedOptions) => {
-                                            const selectedValues = selectedOptions.map((option) => option.value);
-                                            field.onChange(selectedValues);
-                                        }}
-                                        placeholder="Selecione pratos"
-                                        options={additionals}
+                                        placeholder="Selecione adicionais"
+                                        options={additionalCategories}
                                         isMulti
                                         isDisabled={isLoading}
                                         closeMenuOnSelect={false}
