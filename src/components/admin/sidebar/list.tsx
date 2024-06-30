@@ -5,6 +5,7 @@ import { GoClock } from "react-icons/go";
 import { PiNotepad } from "react-icons/pi";
 import { GrMap } from "react-icons/gr";
 import { HiOutlineCreditCard } from "react-icons/hi2";
+import { IoRestaurantOutline } from "react-icons/io5";
 import { MdRestaurantMenu, MdStorefront } from "react-icons/md";
 import { usePathname } from "next/navigation";
 import Item from "./item";
@@ -26,7 +27,7 @@ const itens = [
         text: "Cardápio",
         textHint: "Cardápio",
         link: "/menu/categories",
-        icon: MdRestaurantMenu,
+        icon: IoRestaurantOutline,
     },
     {
         text: "Horários",

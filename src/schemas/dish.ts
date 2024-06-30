@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { DishCategorySchema } from "./dish-category";
 
 export const DishSchema = z.object({
     id: z.string(),

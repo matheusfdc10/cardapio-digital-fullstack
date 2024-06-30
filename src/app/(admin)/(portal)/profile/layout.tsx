@@ -1,10 +1,11 @@
 import Container from "@/components/admin/container";
+import Navbar from "./_components/navbar";
 
 interface ProfileLayoutProps {
     children: React.ReactNode;
 }
 
-const ProfileLayout: React.FC<ProfileLayoutProps> = async ({
+const ProfileLayout: React.FC<ProfileLayoutProps> = ({
     children
 }) => {
 
@@ -13,6 +14,7 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = async ({
             title="Perfil"
             description="Seu perfil é seu resturante!"
         >
+            <Navbar />
             <div className="mt-4">
                 {children}
             </div>

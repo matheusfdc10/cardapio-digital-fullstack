@@ -19,7 +19,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = async ({
     return (
         <main className="h-full">
             <Sidebar />
-            <div className="pl-14 sm:pl-64 h-ful">
+            <div className="pl-14 sm:pl-64 h-full overflow-y-auto">
                 {children}
             </div>
         </main>

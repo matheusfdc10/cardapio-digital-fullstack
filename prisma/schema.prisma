@@ -53,9 +53,10 @@ model Restaurant {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   logo        String?
-  phone       String?
-  whatsapp    String?
-  email       String?
+  phone       String
+  whatsapp    String
+  email       String
+  minimumOrderValue Float?
   address     Address? @relation(fields: [addressId], references: [id])
   addressId   String?  @db.ObjectId @unique
   createdAt   DateTime @default(now())
