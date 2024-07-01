@@ -11,12 +11,14 @@ interface SearchAddressProsp {
     onChange: (address: SearchAddressResponse) => void;
     placeholder?: string;
     textLabel?: string;
+    disabled?: boolean;
 }
 
 const SearchAddress: React.FC<SearchAddressProsp> = ({
     onChange,
     placeholder,
-    textLabel
+    textLabel,
+    disabled,
 }) => {
     const [adresses, setAdresses] = useState<SearchAddressResponse[]>([]);
     const [address, setAddress] = useState<string>('');
@@ -33,6 +35,7 @@ const SearchAddress: React.FC<SearchAddressProsp> = ({
 
     const handleOnChange = (item: SearchAddressResponse) => {
         onChange(item);
+        setAddress("")
         setAdresses([])
     }
 
@@ -52,6 +55,7 @@ const SearchAddress: React.FC<SearchAddressProsp> = ({
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     placeholder={placeholder}
+                    disabled={disabled}
                 />
             </div>
             {!!adresses.length && (

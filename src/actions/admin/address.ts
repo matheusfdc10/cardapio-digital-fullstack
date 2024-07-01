@@ -8,13 +8,13 @@ import { z } from "zod";
 import { getRestaurant } from "@/actions/admin/restaurant";
 
 const AddressUpdate = AddressSchema.extend({
-    // streetAddress: z.string().optional(),
-    // number: z.string().optional(),
-    // neighborhood: z.string().optional(),
-    // city: z.string().optional(),
-    // state: z.string().optional(),
-    // zipCode: z.string().optional(),
-    // country: z.string().optional(),
+    streetAddress: z.string().optional(),
+    number: z.string().optional(),
+    neighborhood: z.string().optional(),
+    city: z.string().optional(),
+    state: z.string().optional(),
+    zipCode: z.string().optional(),
+    country: z.string().optional(),
 }).omit({ createdAt: true, updatedAt: true, userId: true })
 
 
