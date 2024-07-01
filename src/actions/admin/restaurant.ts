@@ -45,6 +45,15 @@ export const createRestaurant = async (data: z.infer<typeof RestaurantCreate>) =
             }
         }
 
+        const hasRestaurant = await getRestaurant();
+
+        if (hasRestaurant.data) {
+            return {
+                data: null,
+                error: "Restaurante já cadastrado"
+            }
+        }
+
         const validatedFields = RestaurantCreate.safeParse(data);
 
         if (!validatedFields.success) {

@@ -15,7 +15,7 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({
             description="Seu perfil é seu resturante!"
         >
             <Navbar />
-            <div className="mt-4">
+            <div className="mt-4 flex-1">
                 {children}
             </div>
         </Container>

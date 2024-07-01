@@ -61,7 +61,7 @@ export const ToggleStatus: React.FC<ToggleStatus> = ({
                 onClick={updateStatus}
                 className={cn(
                     "rounded-2xl text-white font-medium py-1 px-3 active:scale-95 transition-colors",
-                    status ? "bg-emerald-500 hover:bg-emerald-500/80" : "bg-red-500 hover:bg-red-500/80"
+                    status ? "bg-emerald-400 hover:bg-emerald-400/85" : "bg-red-400 hover:bg-red-400/85"
                 )}
             >
                 {status ? "Ativo" : "Inativo"}

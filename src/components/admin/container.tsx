@@ -12,7 +12,7 @@ const Container: React.FC<ContainerProps> = ({
     children
 }) => {
     return (
-        <div className="py-5 px-8 space-y-6">
+        <div className="py-5 px-8 flex flex-col space-y-6 min-h-full">
             <div className="space-y-3">
                 <h1 className="text-4xl font-bold">
                     {title}
@@ -22,7 +22,7 @@ const Container: React.FC<ContainerProps> = ({
                 </p>
                 {/* <Separator /> */}
             </div>
-            <div>
+            <div className="flex-1 flex flex-col">
                 {children}
             </div>
         </div>

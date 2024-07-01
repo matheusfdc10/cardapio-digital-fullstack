@@ -34,9 +34,9 @@ const Navbar = () => {
   return (
     <>
       <div className="relative hidden sm:block">
-        <li className="flex gap-5">
+        <ul className="flex gap-5">
           {navItems.map((item, key) => (
-            <ol key={key}>
+            <li key={key}>
               <Link 
                 href={item.url}
                 className={cn(
@@ -52,9 +52,9 @@ const Navbar = () => {
                   )}
                 />
               </Link>
-            </ol>
+            </li>
           ))}
-        </li>
+        </ul>
         <Separator className="absolute bottom-0 -z-10" />
       </div>
       <div className="w-[250px] block sm:hidden">

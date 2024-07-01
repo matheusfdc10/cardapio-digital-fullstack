@@ -66,13 +66,15 @@ model Restaurant {
 model Address {
   id            String      @id @default(auto()) @map("_id") @db.ObjectId
   streetAddress String
-  number        Int
+  number        String
   complement    String?
   neighborhood  String
   city          String
   state         String
-  zipCode       Int
-  country       String?
+  zipCode       String
+  country       String
+  longitude     String
+  latitude      String
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
   user          User?       @relation(fields: [userId], references: [id])
