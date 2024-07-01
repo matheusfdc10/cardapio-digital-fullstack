@@ -8,6 +8,13 @@ import { z } from "zod";
 import { getRestaurant } from "@/actions/admin/restaurant";
 
 const AddressUpdate = AddressSchema.extend({
+    // streetAddress: z.string().optional(),
+    // number: z.string().optional(),
+    // neighborhood: z.string().optional(),
+    // city: z.string().optional(),
+    // state: z.string().optional(),
+    // zipCode: z.string().optional(),
+    // country: z.string().optional(),
 }).omit({ createdAt: true, updatedAt: true, userId: true })
 
 
@@ -77,6 +84,8 @@ export const createAddress = async (data: z.infer<typeof AddressCreate>) => {
                 neighborhood: data.neighborhood,
                 zipCode: data.zipCode,
                 country: data.country,
+                latitude: data.latitude,
+                longitude: data.longitude,
                 restaurant: {
                     connect: {
                         id: restaurant.data?.id
@@ -143,6 +152,8 @@ export const updateAddress = async(data: z.infer<typeof AddressUpdate>) => {
                 neighborhood: data.neighborhood,
                 zipCode: data.zipCode,
                 country: data.country,
+                latitude: data.latitude,
+                longitude: data.longitude,
             }
         })
 
