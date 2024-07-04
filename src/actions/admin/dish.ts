@@ -9,7 +9,7 @@ import { z } from "zod";
 const DishUpdate = DishSchema.extend({
     status: z.boolean().optional(),
     name: z.string().optional(),
-    price: z.coerce.number().min(0.00).optional(),
+    price: z.coerce.number().min(0.01).optional(),
     categoryId: z.string().min(1).optional(),
     additionalCategoryIds: z.string().array().optional(),
 }).omit({ createdAt: true, dishes: true, updatedAt: true })

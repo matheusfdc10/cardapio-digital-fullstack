@@ -96,6 +96,11 @@ export async function searchAddress(data: SearchAddress): Promise<SearchAddressR
   }
 }
 
+export const range = (keyCount: number): number[] => {
+  return Array.from({ length: keyCount }, (_, i) => i);
+};
+
+
 // type searchCEP = {
 //   uf: string;
 //   city: string;

@@ -32,7 +32,7 @@ const itens = [
     {
         text: "Horários",
         textHint: "Horários",
-        link: "/home",
+        link: "/schedules",
         icon: GoClock,
     },
     {

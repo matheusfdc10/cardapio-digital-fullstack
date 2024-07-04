@@ -57,6 +57,7 @@ model Restaurant {
   whatsapp    String
   email       String
   minimumOrderValue Float?
+  openingHours OpeningHours[]
   address     Address? @relation(fields: [addressId], references: [id])
   addressId   String?  @db.ObjectId @unique
   createdAt   DateTime @default(now())
@@ -80,6 +81,18 @@ model Address {
   user          User?       @relation(fields: [userId], references: [id])
   userId        String?     @db.ObjectId
   restaurant    Restaurant?
+}
+
+// schedules
+model OpeningHours  {
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  restaurant   Restaurant  @relation(fields: [restaurantId], references: [id])
+  restaurantId String      @db.ObjectId
+  dayOfWeek    Int
+  opensAt      String
+  closesAt     String
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
 }
 
 model DishCategory {

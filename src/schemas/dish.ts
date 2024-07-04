@@ -6,8 +6,8 @@ export const DishSchema = z.object({
         .string({ required_error: 'O nome é obrigatório'})
         .min(3, 'O nome deve conter no mínimo 3 caracteres'),
     description: z.string().optional(),
-    price: z.coerce.number().min(0.00, {
-        message: "Valor mínimo 0,00"
+    price: z.coerce.number().min(0.01, {
+        message: "Valor mínimo 0,01"
     }),
     image: z.string().optional(),
     status: z.boolean().default(false),
