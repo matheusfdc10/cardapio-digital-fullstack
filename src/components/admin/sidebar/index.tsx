@@ -2,15 +2,13 @@ import { getRestaurant } from "@/actions/admin/restaurant";
 import List from "./list";
 import SignOutButton from "./signout-button";
 import Logo from "./logo";
-import { cn, getTodayWeekdayIndex } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import RestaurantStatus from "./restaurant-status";
 import { OpeningHoursType } from "@/types";
 
 const Sidebar = async () => {
     const restaurant = await getRestaurant();
-
-    console.log(getTodayWeekdayIndex())
-
+    
     const isOpenNow = (openingHours: OpeningHoursType[] | null): boolean | null => {
         if (!openingHours) return null
         const now = new Date();

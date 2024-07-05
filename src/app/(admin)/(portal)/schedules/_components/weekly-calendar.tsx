@@ -62,6 +62,7 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
                     dayOfWeek={modalForm.dayOfWeek}
                 />
             </Modal>
+            <span>{new Date().getHours()}:{new Date().getMinutes()}</span>
             <div className="w-full border overflow-auto">
                 <div className="grid grid-cols-[40px,repeat(7,1fr)] relative">
                     <HourColumn />
