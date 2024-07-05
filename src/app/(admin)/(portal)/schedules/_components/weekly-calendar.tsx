@@ -6,6 +6,7 @@ import DayColumn from "./day-column";
 import Modal from "@/components/modals";
 import OpeningHoursForm from "./form";
 import { OpeningHoursType } from "@/types";
+import { date } from "@/lib/utils";
 
 export const DAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'];
 
@@ -29,7 +30,7 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
     openingHours,
     hour
 }) => {
-    const now = new Date();
+    const now = date();
     const currentHour = now.getHours();
     const currentMinutes = now.getMinutes();
     const [modalForm, setModalForm] = useState<{state: boolean, dayOfWeek?: number}>({ state: false })
@@ -62,7 +63,6 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
                     dayOfWeek={modalForm.dayOfWeek}
                 />
             </Modal>
-            <span>{new Date().getHours()}:{new Date().getMinutes()}</span>
             <div className="w-full border overflow-auto">
                 <div className="grid grid-cols-[40px,repeat(7,1fr)] relative">
                     <HourColumn />

@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 import axios from "axios";
 import { Address } from "@prisma/client";
+import { toZonedTime } from 'date-fns-tz';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -100,9 +101,16 @@ export const range = (keyCount: number): number[] => {
   return Array.from({ length: keyCount }, (_, i) => i);
 };
 
-export function getTodayWeekdayIndex() {
-  const today = new Date();
-  return today.getDay();
+export function date(): Date {
+  const timeZone = process.env.TIME_ZONE || 'America/Sao_Paulo';
+  const now = new Date();
+  const zonedDate = toZonedTime(now, timeZone);
+  return zonedDate;
+}
+
+export function getTodayWeekdayIndex(): number {
+  const zonedDate = date();
+  return zonedDate.getDay();
 }
 
 // type searchCEP = {

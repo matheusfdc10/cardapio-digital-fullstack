@@ -2,7 +2,7 @@ import { getRestaurant } from "@/actions/admin/restaurant";
 import List from "./list";
 import SignOutButton from "./signout-button";
 import Logo from "./logo";
-import { cn } from "@/lib/utils";
+import { cn, date } from "@/lib/utils";
 import RestaurantStatus from "./restaurant-status";
 import { OpeningHoursType } from "@/types";
 
@@ -11,7 +11,7 @@ const Sidebar = async () => {
     
     const isOpenNow = (openingHours: OpeningHoursType[] | null): boolean | null => {
         if (!openingHours) return null
-        const now = new Date();
+        const now = date();
         const currentDay = now.getDay();
         const currentTime = now.getHours() * 60 + now.getMinutes(); // Convert current time to minutes
     

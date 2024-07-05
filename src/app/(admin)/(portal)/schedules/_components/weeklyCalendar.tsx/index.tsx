@@ -1,4 +1,4 @@
-import { range } from "@/lib/utils";
+import { date, range } from "@/lib/utils";
 
 const DAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'];
 
@@ -19,7 +19,7 @@ interface WeeklyCalendarProps {
 }
 
 const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ openingHours, hour }) => {
-    const now = new Date();
+    const now = date();
     const currentHour = now.getHours();
     const currentMinutes = now.getMinutes();
 
