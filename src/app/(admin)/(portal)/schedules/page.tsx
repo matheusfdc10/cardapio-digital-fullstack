@@ -1,9 +1,11 @@
-import ClientSchedules from "./_components/client";
+import { getOpeningHoursAll } from "@/actions/admin/opening-hours";
+import WeeklyCalendar from "./_components/weekly-calendar";
 
 const SchedulesPage = async () => {
+    const reponse = await getOpeningHoursAll()
 
     return (
-        <ClientSchedules />
+        <WeeklyCalendar openingHours={reponse.data} hour/>
     )
 }
 export default SchedulesPage;

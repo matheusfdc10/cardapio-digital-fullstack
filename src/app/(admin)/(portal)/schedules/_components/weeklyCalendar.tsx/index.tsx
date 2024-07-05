@@ -1,4 +1,3 @@
-
 import { range } from "@/lib/utils";
 
 const DAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'];
@@ -19,10 +18,7 @@ interface WeeklyCalendarProps {
     hour?: boolean;
 }
 
-const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ 
-    openingHours,
-    hour 
-}) => {
+const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ openingHours, hour }) => {
     const now = new Date();
     const currentHour = now.getHours();
     const currentMinutes = now.getMinutes();
@@ -34,52 +30,38 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
 
     const calculateEventPosition = (opensAt: string, closesAt: string) => {
         const { hours: openHour, minutes: openMinutes } = parseTime(opensAt);
-
         const closesAtTime = parseTime(closesAt);
-        const howLong = (closesAtTime.hours - openHour) + (closesAtTime.minutes - openMinutes) / 60;
+        const duration = (closesAtTime.hours - openHour) + (closesAtTime.minutes - openMinutes) / 60;
 
         return {
-            top: (openHour - 1) * HOUR_HEIGHT + HOUR_MARGIN_TOP + openMinutes * HOUR_HEIGHT / 60 + 30, // Ajuste aqui
-            height: howLong * HOUR_HEIGHT,
+            top: openHour * HOUR_HEIGHT + HOUR_MARGIN_TOP + openMinutes * HOUR_HEIGHT / 60,
+            height: duration * HOUR_HEIGHT,
         };
     };
 
     return (
         <div className="w-full border overflow-auto">
-            <div className="grid grid-cols-[60px,repeat(7,1fr)] relative">
-                <div 
-                    className="grid grid-rows-[repeat(24,1fr)] first:mt-[24px]"
-                >
+            <div className="grid grid-cols-[40px,repeat(7,1fr)] relative">
+                <div className="grid grid-rows-[repeat(24,1fr)] first:mt-[24px]">
                     {range(24).map((hour, key) => (
-                        <span 
-                            key={key}
-                            className="flex items-center justify-center"
-                            style={{ height: `${HOUR_HEIGHT}px` }}
-                        >
-                            <p>{hour < 10 ? `0${hour}` : hour}:00</p>
+                        <span key={key} className="flex items-center justify-center" style={{ height: `${HOUR_HEIGHT}px` }}>
+                            <p className="text-sm text-muted-foreground">{hour}h</p>
                         </span>
                     ))}
                 </div>
                 {DAYS.map((day, key) => (
-                    <div 
-                        key={key} 
-                        className="border relative overflow-hidden cursor-pointer"
-                        style={{
-                            // background: areaDatesSame(now, addDateBy(mondayDate, key)) ? '#F2CEE6' : ''
-                        }}
-                    >
+                    <div key={key} className="border-l relative cursor-pointer min-w-16">
                         <p className="text-center font-medium">{day}</p>
-                        <div className="border"/>
+                        {range(24).map((line, lineKey) => (
+                            <div key={lineKey} className="border-t border-slate-100/95 absolute w-full" style={{ top: line * HOUR_HEIGHT + HOUR_MARGIN_TOP }} />
+                        ))}
                         {openingHours.filter(event => event.dayOfWeek === key).map((event, i) => {
                             const { top, height } = calculateEventPosition(event.opensAt, event.closesAt);
                             return (
                                 <div
                                     key={i}
-                                    className="absolute left-1 right-1 bg-green-400 text-white text-center font-medium p-1 border flex flex-col justify-between overflow-hidden hover:z-10 cursor-pointer"
-                                    style={{
-                                        top,
-                                        height,
-                                    }}
+                                    className="absolute left-1 right-1 bg-green-400/30 hover:bg-green-500/30 text-green-600 text-center text-sm font-medium p-1 shadow-sm flex flex-col justify-center hover:z-10 cursor-pointer"
+                                    style={{ top, height }}
                                 >
                                     <span>De {event.opensAt}</span>
                                     <span>às {event.closesAt}</span>
@@ -89,10 +71,10 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
                     </div>
                 ))}
                 {hour && (
-                    <div 
-                        className="absolute w-full border border-blue-400"
+                    <div
+                        className="absolute w-full border-t border-blue-400/90 z-20"
                         style={{
-                            top: (currentHour - 1) * HOUR_HEIGHT + HOUR_MARGIN_TOP + currentMinutes * HOUR_HEIGHT / 60 + 30 // Ajuste aqui
+                            top: currentHour * HOUR_HEIGHT + HOUR_MARGIN_TOP + currentMinutes * HOUR_HEIGHT / 60,
                         }}
                     />
                 )}
