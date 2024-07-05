@@ -100,6 +100,10 @@ export const range = (keyCount: number): number[] => {
   return Array.from({ length: keyCount }, (_, i) => i);
 };
 
+export function getTodayWeekdayIndex() {
+  const today = new Date();
+  return today.getDay();
+}
 
 // type searchCEP = {
 //   uf: string;

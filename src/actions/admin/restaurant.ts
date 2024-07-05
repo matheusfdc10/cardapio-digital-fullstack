@@ -2,6 +2,7 @@
 
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
+import { getTodayWeekdayIndex } from "@/lib/utils";
 import { RestaurantSchema } from "@/schemas/restaurant";
 import { UserRole } from "@prisma/client";
 import { z } from "zod";
@@ -15,10 +16,17 @@ const RestaurantCreate = RestaurantSchema.extend({
 
 
 export const getRestaurant = async () => {
+    const dayOfWeek =  getTodayWeekdayIndex()
+
     try {
         const restaurant = await db.restaurant.findMany({
             include: {
                 address: true,
+                openingHours: {
+                    where: {
+                        dayOfWeek
+                    }
+                }
             }
         })
 

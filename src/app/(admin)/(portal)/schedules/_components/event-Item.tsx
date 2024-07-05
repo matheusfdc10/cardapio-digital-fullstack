@@ -21,6 +21,7 @@ const EventItem: React.FC<EventItemProps> = ({
     closesAt,
 }) => {
     const [stateModal, setStateModal] = useState(false)
+
     return (
         <>
             <Modal
@@ -33,6 +34,7 @@ const EventItem: React.FC<EventItemProps> = ({
                     onClose={() => setStateModal(false)}
                 />
             </Modal>
+            
             <div
                 onClick={() => setStateModal(true)}
                 className="absolute left-1 right-1 bg-green-400/30 hover:bg-green-500/30 text-green-600 text-center text-sm font-medium p-1 shadow-sm flex flex-col justify-center hover:z-10 cursor-pointer"

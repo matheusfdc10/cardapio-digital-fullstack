@@ -20,6 +20,7 @@ export type AdditionalType = Additional & {
 
 export type RestaurantType = Restaurant & {
     address?: Address | null;
+    openingHours?: OpeningHours | null;
 }
 
 export type AddressType = Address & {
