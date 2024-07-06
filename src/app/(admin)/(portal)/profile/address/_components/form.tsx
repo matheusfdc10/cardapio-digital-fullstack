@@ -13,6 +13,8 @@ import { createAddress, updateAddress } from "@/actions/admin/address";
 import { toast } from "@/components/ui/use-toast";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Heading } from "@/components/ui/heading";
+import Modal from "@/components/modals";
+import { useState } from "react";
 
 const formSchema = AddressSchema.omit({ id: true, updatedAt:true, createdAt: true, addressId: true, userId: true });
 
@@ -26,6 +28,7 @@ const FormAddress: React.FC<AddressFormPros> = ({
     initialDate
 }) => {
     const router = useRouter();
+    const [stateModal, setStateModal] = useState(initialDate ? false : true)
 
     const action = initialDate ? 'Atualizar' : 'Adicionar';
     const title = initialDate ? "Atualizar Endereço" : "Adicionar Endereço";
@@ -89,30 +92,34 @@ const FormAddress: React.FC<AddressFormPros> = ({
     }
 
     return (
-        <div className="space-y-4 w-full">
-            <Heading
-                title={title}
-            />
-            {!!form.watch('streetAddress') ? (
-                <div className="w-full items-end">
-                    <Button
-                        onClick={() => form.setValue("streetAddress", "")}
-                    >
-                        Buscar endereço
-                    </Button>
-                </div>
-            ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-                    <SearchAddress 
-                        onChange={(address) => form.reset(address)}
-                        placeholder="Ex.: Rua teste, 123"
-                        textLabel="Buscar endereço"
-                        disabled={isLoading}
-                    />
-                </div>
-            )}
-
-            {!!form.watch('streetAddress') ? (
+        <>
+            <Modal
+                onClose={() => setStateModal(false)}
+                isOpen={stateModal}
+                title={initialDate ? "Editar Endereço" : "Novo Endereço"}
+            >
+                <SearchAddress 
+                    onChange={(address) => {
+                        form.reset({
+                            ...address,
+                            complement: ''
+                        });
+                        setStateModal(false);
+                    }}
+                    placeholder="Ex.: Rua teste, 123"
+                    textLabel="Buscar endereço"
+                    disabled={isLoading}
+                />
+            </Modal>
+            <div className="space-y-4 w-full">
+                <Heading
+                    title={title}
+                />
+                <Button
+                    onClick={() => setStateModal(true)}
+                >
+                    Buscar endereço
+                </Button>
                 <Form {...form}>
                     <form 
                         onSubmit={form.handleSubmit(onSubmit)}
@@ -144,7 +151,7 @@ const FormAddress: React.FC<AddressFormPros> = ({
                                         <FormLabel>Número</FormLabel>
                                         <FormControl>
                                             <Input
-                                                disabled={isLoading}
+                                                disabled
                                                 placeholder="ex.: 123"
                                                 {...field}
                                             />
@@ -268,21 +275,8 @@ const FormAddress: React.FC<AddressFormPros> = ({
                         </div>
                     </form>
                 </Form>
-            ) : (
-                <div className="flex justify-end pt-8">
-                    <div className="flex flex-wrap gap-4 justify-end">
-                        <Button
-                            onClick={() => form.reset({
-                                ...initialDate,
-                                complement: initialDate?.complement || "",
-                            })}
-                        >
-                            Cancelar
-                        </Button>
-                    </div>
-                </div>
-            )}
-        </div>
+            </div>
+        </>
     );
 }
  

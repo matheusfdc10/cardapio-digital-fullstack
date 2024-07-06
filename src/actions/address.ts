@@ -4,7 +4,7 @@ import { Address } from "@prisma/client";
 import axios from "axios";
 
 export type SearchAddressType = Omit<Address, 'id' | 'createdAt' | 'updatedAt' | 'userId' | 'complement'> & {
-    uf: string;
+  uf: string;
 }
 
 export const searchAddress = async (address: string): Promise<SearchAddressType[] | null> => {
@@ -18,7 +18,7 @@ export const searchAddress = async (address: string): Promise<SearchAddressType[
       
       if (data.status === 'OK' && data.results.length > 0) {
         return data.results.map((result: any) => {
-          const { lat, lng } = result.geometry.location;
+          const { lat, lng } = result.geometry.location as {lat: number, lng: number};
   
           const getComponentLongName = (type: string) => {
             const component = result.address_components.find((c: any) => c.types.includes(type));
@@ -39,8 +39,8 @@ export const searchAddress = async (address: string): Promise<SearchAddressType[
             city: getComponentLongName('administrative_area_level_2'),
             zipCode: getComponentLongName('postal_code'),
             uf: getComponentShortName('administrative_area_level_1'),
-            latitude: lat,
-            longitude: lng,
+            latitude: lat.toString(),
+            longitude: lng.toString(),
           } as SearchAddressType
         });
       } else {
