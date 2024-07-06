@@ -238,6 +238,23 @@ const FormAddress: React.FC<AddressFormPros> = ({
                                     </FormItem>
                                 )}
                             />                             
+                            <FormField 
+                                control={form.control}
+                                name="zipCode"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>CEP</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                disabled
+                                                placeholder=""
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />                             
                         </div>
                         <div className="flex justify-end pt-8">
                             <div className="flex flex-wrap gap-4 justify-end">
