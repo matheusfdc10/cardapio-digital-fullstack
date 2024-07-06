@@ -78,7 +78,7 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
                     ))}
                     {hour && (
                         <div
-                            className="absolute w-full border-t border-blue-400/90 z-20"
+                            className="absolute w-full left-0 right-0 border-t border-blue-400/90 z-20"
                             style={{
                                 top: currentHour * HOUR_HEIGHT + HOUR_MARGIN_TOP + currentMinutes * HOUR_HEIGHT / 60,
                             }}

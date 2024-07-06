@@ -2,13 +2,13 @@
 
 import { PiMapPinLight } from "react-icons/pi";
 import { useCallback, useEffect, useState } from "react";
-import { SearchAddressResponse, searchAddress } from "@/lib/utils";
 import { useDebounceValue } from "usehooks-ts";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SearchAddressType, searchAddress } from "@/actions/address";
 
 interface SearchAddressProsp {
-    onChange: (address: SearchAddressResponse) => void;
+    onChange: (address: SearchAddressType) => void;
     placeholder?: string;
     textLabel?: string;
     disabled?: boolean;
@@ -20,23 +20,37 @@ const SearchAddress: React.FC<SearchAddressProsp> = ({
     textLabel,
     disabled,
 }) => {
-    const [adresses, setAdresses] = useState<SearchAddressResponse[]>([]);
+    const [adresses, setAdresses] = useState<SearchAddressType[]>([]);
     const [address, setAddress] = useState<string>('');
     const debouncedValue = useDebounceValue(address, 500);
 
     const fetchAddresses = useCallback(async () => {
         if (debouncedValue[0].length >= 3) {
-            const response = await searchAddress({ street: debouncedValue[0] });
+            const response = await searchAddress(debouncedValue[0]);
+            
             setAdresses(response || []);
         } else {
             setAdresses([]);
         }
     }, [debouncedValue[0]]);
 
-    const handleOnChange = (item: SearchAddressResponse) => {
-        onChange(item);
-        setAddress("")
-        setAdresses([])
+    const handleOnChange = (item: SearchAddressType) => {
+        if (
+            item.city &&
+            item.country &&
+            item.latitude &&
+            item.longitude &&
+            item.neighborhood &&
+            item.number &&
+            item.state &&
+            item.streetAddress &&
+            item.uf &&
+            item.zipCode
+        ) {
+            onChange(item);
+            setAddress("")
+            setAdresses([])
+        }
     }
 
     useEffect(() => {
@@ -69,12 +83,15 @@ const SearchAddress: React.FC<SearchAddressProsp> = ({
                             <div className="flex justify-center items-center w-10">
                                 <PiMapPinLight className="h-5 w-5 text-muted-foreground" />
                             </div>
-                            <div className="flex flex-col flex-1">
+                            <div className="flex flex-col flex-1 mr-2">
                                 <span>
                                     {address.streetAddress}{address.number ?  `, ${address.number}` : ''}
                                 </span>
                                 <span className="text-sm text-muted-foreground">
-                                    {address.neighborhood} - {address.city} - {address.uf} - {address.country}
+                                    {address.neighborhood} 
+                                    {address.city && ` - ${address.city}`}
+                                    {address.uf && ` - ${address.uf}`}
+                                    {address.country && ` - ${address.country}`}
                                 </span>
                             </div>
                         </li>

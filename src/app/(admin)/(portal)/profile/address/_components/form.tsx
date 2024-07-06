@@ -162,7 +162,7 @@ const FormAddress: React.FC<AddressFormPros> = ({
                                         <FormControl>
                                             <Input
                                                 disabled={isLoading}
-                                                placeholder="ex.: 101"
+                                                placeholder=""
                                                 {...field}
                                             />
                                         </FormControl>
