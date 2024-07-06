@@ -13,14 +13,6 @@ export const DAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'];
 const HOUR_HEIGHT = 30;
 const HOUR_MARGIN_TOP = 24;
 
-// export type OpeningHoursType = {
-//     id: string;
-//     restaurantId: string;
-//     dayOfWeek: number;
-//     opensAt: string;
-//     closesAt: string;
-// };
-
 interface WeeklyCalendarProps {
     openingHours: OpeningHoursType[] | null;
     hour?: boolean;

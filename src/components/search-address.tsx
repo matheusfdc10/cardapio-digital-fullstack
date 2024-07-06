@@ -62,7 +62,7 @@ const SearchAddress: React.FC<SearchAddressProsp> = ({
             <div className="space-y-2">
                 {textLabel && (
                     <Label>
-                        Busca endereço
+                        {textLabel}
                     </Label>
                 )}
                 <Input
@@ -85,13 +85,10 @@ const SearchAddress: React.FC<SearchAddressProsp> = ({
                             </div>
                             <div className="flex flex-col flex-1 mr-2">
                                 <span>
-                                    {address.streetAddress}{address.number ?  `, ${address.number}` : ''}
+                                    {[address.streetAddress, address.number].filter(Boolean).join(', ')}
                                 </span>
                                 <span className="text-sm text-muted-foreground">
-                                    {address.neighborhood} 
-                                    {address.city && ` - ${address.city}`}
-                                    {address.uf && ` - ${address.uf}`}
-                                    {address.country && ` - ${address.country}`}
+                                    {[address.neighborhood, address.city, address.uf, address.country].filter(Boolean).join(' - ')}
                                 </span>
                             </div>
                         </li>

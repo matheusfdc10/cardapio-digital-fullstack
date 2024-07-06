@@ -36,9 +36,9 @@ const itens = [
         icon: GoClock,
     },
     {
-        text: "Áreas de entrega",
-        textHint: "Áreas de entrega",
-        link: "/home",
+        text: "Área de entrega",
+        textHint: "Área de entrega",
+        link: "/delivery-area",
         icon: GrMap,
     },
     {
