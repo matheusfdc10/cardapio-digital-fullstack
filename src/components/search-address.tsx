@@ -112,6 +112,7 @@ const SearchAddress: React.FC<SearchAddressProsp> = ({
                 {address && (
                     <div className="absolute top-[10px] left-[10px] space-y-4">
                         <div
+                            onClick={() => onChange(address)}
                             className="bg-white rounded-sm flex py-2 cursor-pointer hover:bg-zinc-50 active:scale-[.99]"
                         >
                             <div className="flex justify-center items-center w-10">
