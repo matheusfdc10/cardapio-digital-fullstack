@@ -29,7 +29,7 @@ export const searchAddress = async (address: string): Promise<SearchAddressType[
             const component = result.address_components.find((c: any) => c.types.includes(type));
             return component ? component.short_name : '';
           };
-  
+          
           return {
             streetAddress: getComponentLongName('route'),
             number: getComponentLongName('street_number'),
@@ -41,6 +41,7 @@ export const searchAddress = async (address: string): Promise<SearchAddressType[
             uf: getComponentShortName('administrative_area_level_1'),
             latitude: lat.toString(),
             longitude: lng.toString(),
+            // teste: result
           } as SearchAddressType
         });
       } else {

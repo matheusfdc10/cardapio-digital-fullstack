@@ -30,7 +30,7 @@ const SearchAddress: React.FC<SearchAddressProsp> = ({
     const fetchAddresses = useCallback(async () => {
         if (debouncedValue[0].length >= 3) {
             const response = await searchAddress(debouncedValue[0]);
-            
+            // console.log(response)
             setAdresses(response || []);
         } else {
             setAdresses([]);
@@ -103,7 +103,7 @@ const SearchAddress: React.FC<SearchAddressProsp> = ({
                     </ul>
                 )}
             </div>
-            
+
             <MapArea
                 lat={Number(address?.latitude)}
                 lng={Number(address?.longitude)}
