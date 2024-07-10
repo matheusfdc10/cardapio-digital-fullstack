@@ -1,15 +1,23 @@
-import { getRestaurant } from "@/actions/admin/restaurant";
+import ToastError from "@/components/toast-error";
 import DeliveryAreaClient from "./_components/client";
+import { getDeliveryAreas } from "@/actions/admin/delivery-area";
+import { getAddress } from "@/actions/admin/address";
 
 const DeliveryAreaPage = async () => {
-    const response = await getRestaurant()
+    const response = await getDeliveryAreas();
+
+    if (response.error) {
+        return (
+            <ToastError
+                errorMessage='Erro ao buscar areas de entrega'
+                toastMessage={response.error}
+            />
+        )
+    }
 
     return (
         <DeliveryAreaClient
-            distance={3}
-            lat={Number(response.data?.address?.latitude)}
-            lng={Number(response.data?.address?.longitude)}
-            name={response.data?.name || 'Restaurant'}
+            data={response.data}
         />
     )
 }

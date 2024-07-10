@@ -1,4 +1,4 @@
-import { DishCategory, Dish, AdditionalCategory, Additional, Restaurant, Address, User, OpeningHours } from "@prisma/client";
+import { DishCategory, Dish, AdditionalCategory, Additional, Restaurant, Address, User, OpeningHours, DeliveryArea } from "@prisma/client";
 
 export type DishCategoryType = Omit<DishCategory, 'description'> & {
     dishes: Dish[]
@@ -21,6 +21,7 @@ export type AdditionalType = Additional & {
 export type RestaurantType = Restaurant & {
     address?: Address | null;
     openingHours?: OpeningHours[] | null;
+    deliveryAreas?: DeliveryArea[] | null;
 }
 
 export type AddressType = Address & {
@@ -29,5 +30,9 @@ export type AddressType = Address & {
 }
 
 export type OpeningHoursType = OpeningHours & {
+    restaurant?: Restaurant | null;
+}
+
+export type DeliveryAreaType = DeliveryArea & {
     restaurant?: Restaurant | null;
 }

@@ -36,6 +36,7 @@ const MapArea: React.FC<MapAreaProps> = ({ lat, lng, distance, name = 'Você', z
         {children}
         {!!(lat || lng) && (
           <Marker position={center} options={{
+            zIndex: 2,
             label: {
               text: name,
               className: '-mt-8',
@@ -44,21 +45,20 @@ const MapArea: React.FC<MapAreaProps> = ({ lat, lng, distance, name = 'Você', z
             }
           }}/>
         )}
-        {distance && (
+        
           <Circle center={center} options={{
             strokeColor: '#FF0000',
             strokeOpacity: 0.8,
-            strokeWeight: 2,
-            fillColor: '#FF0000',
-            fillOpacity: 0.35,
+            strokeWeight: 1,
+            fillColor: '#ff000050',
+            fillOpacity: 0.10,
             clickable: false,
             draggable: false,
             editable: false,
             visible: true,
-            radius: distance * 1000, // Convert km to meters
+            radius: distance ? distance * 1000 : null, // Convert km to meters
             zIndex: 1,
           }} />
-        )}
       </GoogleMap>
     </LoadScript>
   );

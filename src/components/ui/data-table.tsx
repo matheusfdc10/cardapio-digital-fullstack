@@ -28,7 +28,7 @@ import { usePathname } from "next/navigation"
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  searchKey: string;
+  searchKey?: string;
   onClickReorder?: () => void;
 }
 
@@ -55,21 +55,25 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-        <div className="flex justify-between items-center gap-4 py-4 w-full">
-            <Input
-                placeholder="Buscar"
-                value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
-                onChange={(event) =>
-                    table.getColumn(searchKey)?.setFilterValue(event.target.value)
-                }
-                className="max-w-sm"
-            />
-            {onClickReorder && data.length > 1 && !pathName.split('/')[3] && (
-                <Button onClick={onClickReorder}>
-                    Reordenar
-                </Button>
-            )}
-        </div>
+        {((onClickReorder && data.length > 1 && !pathName.split('/')[3]) || searchKey) && (
+            <div className="flex justify-between items-center gap-4 py-4 w-full">
+                {searchKey && (
+                    <Input
+                        placeholder="Buscar"
+                        value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
+                        onChange={(event) =>
+                            table.getColumn(searchKey)?.setFilterValue(event.target.value)
+                        }
+                        className="max-w-sm"
+                    />
+                )}
+                {onClickReorder && data.length > 1 && !pathName.split('/')[3] && (
+                    <Button onClick={onClickReorder}>
+                        Reordenar
+                    </Button>
+                )}
+            </div>
+        )}
         <div className="rounded-md border">
             <Table>
                 <TableHeader className="whitespace-nowrap">
