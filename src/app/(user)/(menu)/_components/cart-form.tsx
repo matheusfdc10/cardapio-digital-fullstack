@@ -285,7 +285,7 @@ const CartForm: React.FC<CartFormProps> = ({
           </div>
           
           
-          <div className='sticky bottom-0 z-40 bg-white flex-1 flex justify-between flex-wrap gap-6 items-end px-6 py-3'>
+          <div className='sticky bottom-0 z-40 bg-white flex-1 flex  flex-wrap gap-6 items-end px-6 py-3'>
             <div className='flex items-center gap-3'>
               <button
                 onClick={handleRemoveDish}
