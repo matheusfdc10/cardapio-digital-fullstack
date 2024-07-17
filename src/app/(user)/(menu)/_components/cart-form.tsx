@@ -122,7 +122,7 @@ const CartForm: React.FC<CartFormProps> = ({
   //   console.log(form.formState.errors)
 
   return (
-    <div className='min-h-screen'>
+    <>
       <div className='sticky top-0 z-40 bg-white'>
         <div className='relative w-full h-14 flex justify-center items-center'>
           <div onClick={onClose} className='absolute left-5 cursor-pointer'>
@@ -135,7 +135,7 @@ const CartForm: React.FC<CartFormProps> = ({
       </div>
 
       {dish.image && (
-        <div className='relative sm:w-96 h-48 overflow-hidden mx-auto sm:rounded-lg'>
+        <div className='relative h-60 w-full sm:h-48 sm:w-96 overflow-hidden mx-auto sm:rounded-lg'>
           <Image
             src={dish.image}
             alt={dish.name}
@@ -159,7 +159,7 @@ const CartForm: React.FC<CartFormProps> = ({
       <Form {...form}>
         <form 
           onSubmit={form.handleSubmit(onSubmit)}
-          className="w-full"
+          className="w-full flex-1 flex flex-col relative"
         >
           {/* ADDITIONALS */}
           <ul className='border-b'>
@@ -284,7 +284,7 @@ const CartForm: React.FC<CartFormProps> = ({
             />
           </div>
 
-          <div className='sticky bottom-0 z-40 bg-white flex justify-between flex-wrap gap-6 items-center px-6 py-3'>
+          <div className='stroke-inherit bottom-0 z-40 bg-white flex-1 flex justify-between flex-wrap gap-6 items-end px-6 py-3'>
             <div className='flex items-center gap-3'>
               <button
                 onClick={handleRemoveDish}
@@ -317,7 +317,7 @@ const CartForm: React.FC<CartFormProps> = ({
           </div>
         </form>
       </Form>
-    </div>
+    </>
   );
 };
 

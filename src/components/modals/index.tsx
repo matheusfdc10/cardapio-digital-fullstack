@@ -59,9 +59,9 @@ const Modal: React.FC<ModalProps> = ({
                         )}
                     >   
                         <div className={cn(
-                            `relative z-50 min-h-screen bg-white shadow-md w-full`,
+                            `relative z-50 bg-white shadow-md w-full flex flex-col`,
                             maxWidth ? '' : 'max-w-[640px]',
-                            smFull ? 'sm:rounded-lg sm:overflow-hidden' : 'p-6 border rounded-lg'
+                            smFull ? 'sm:rounded-lg sm:overflow-hidden min-h-screen sm:min-h-0' : 'p-6 border rounded-lg'
                         )}
                             style={{
                                 maxWidth: `${maxWidth}px`
