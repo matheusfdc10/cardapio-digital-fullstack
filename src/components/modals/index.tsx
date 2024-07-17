@@ -11,7 +11,8 @@ interface ModalProps {
     onClose: () => void;
     children: React.ReactNode;
     maxWidth?: number;
-    smFull?: boolean
+    smFull?: boolean;
+    image?: boolean;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -22,6 +23,7 @@ const Modal: React.FC<ModalProps> = ({
     description,
     maxWidth,
     smFull,
+    image
 }) => {
 
     const onChange = () => {
@@ -36,10 +38,15 @@ const Modal: React.FC<ModalProps> = ({
 
     useEffect(() => {
         if (!isOpen) return
-        const body = document.getElementsByTagName("body");
-        body[0].classList.add("overflow-hidden");
+
+        const body = document.getElementsByTagName("body")[0];
+        const hasClass = body.classList.contains('overflow-hidden')
+
+        if(hasClass) return
+
+        body.classList.add("overflow-hidden");
         return () => {
-            body[0].classList.remove("overflow-hidden");
+            body.classList.remove("overflow-hidden");
         }
     }, [isOpen]);
 
@@ -57,14 +64,14 @@ const Modal: React.FC<ModalProps> = ({
                             'flex min-h-full items-center justify-center',
                             smFull ? 'px-0 py-0 sm:px-4 sm:py-8' : 'px-4 py-8'
                         )}
-                    >   
+                    > 
                         <div className={cn(
-                            `relative z-50 bg-white shadow-md w-full flex flex-col`,
+                            `relative z-50 bg-white shadow-md w-full flex flex-col overflow-hidden`,
                             maxWidth ? '' : 'max-w-[640px]',
-                            smFull ? 'sm:rounded-lg overflow-y-auto sm:overflow-hidden h-[100dvh] sm:h-auto' : 'p-6 border rounded-lg'
+                            smFull ? 'sm:rounded-lg overflow-y-auto sm:overflow-hidden h-[100dvh] sm:h-auto' : image ? 'rounded-lg w-auto' : 'p-6 border rounded-lg'
                         )}
                             style={{
-                                maxWidth: `${maxWidth}px`
+                                maxWidth: `${maxWidth}px`,
                             }}
                         >
                             {!smFull && (
