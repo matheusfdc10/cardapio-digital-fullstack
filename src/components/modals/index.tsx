@@ -46,7 +46,7 @@ const Modal: React.FC<ModalProps> = ({
     if (!isOpen) return null;
 
     return (
-        <div className='fixed z-[50] w-screen h-screen top-0 left-0 right-0'>
+        <div className='fixed z-[50] w-screen h-[100dvh] top-0 left-0 right-0'>
             <div 
                 className='relative w-full h-full bg-zinc-900/50 backdrop-blur-sm'
             >
