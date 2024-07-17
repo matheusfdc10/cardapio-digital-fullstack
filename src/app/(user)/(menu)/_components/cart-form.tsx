@@ -123,53 +123,152 @@ const CartForm: React.FC<CartFormProps> = ({
 
   return (
     <>
-      <div className='sticky top-0 z-40 bg-white'>
-        <div className='relative w-full h-14 flex justify-center items-center'>
-          <div onClick={onClose} className='absolute left-5 cursor-pointer'>
-            <IoIosArrowBack className='w-6 h-6' />
-          </div>
-          <h1 className='text-center text-sm sm:text-base font-semibold uppercase mx-14'>
-            {dish.name}
-          </h1>
-        </div>
-      </div>
-
-      {dish.image && (
-        <div className='relative h-60 w-full sm:h-48 sm:w-96 overflow-hidden mx-auto sm:rounded-lg'>
-          <Image
-            src={dish.image}
-            alt={dish.name}
-            fill
-          />
-        </div>
-      )}
-
-      <div className='mx-8 my-4 flex flex-col gap-2'>
-        <h2 className='text-xl font-bold leading-tight'>
-          {dish.name}
-        </h2>
-        <p className='whitespace-pre-line leading-5 text-muted-foreground'>
-          {dish.description}
-        </p>
-        <span className='mt-4 font-bold'>
-          {formatPrice(dish.price)}
-        </span>
-      </div>
-
       <Form {...form}>
         <form 
           onSubmit={form.handleSubmit(onSubmit)}
-          className="w-full flex-1 flex flex-col relative"
+          className="flex-1 flex flex-col"
         >
+          <div className='sticky top-0 z-40 bg-white'>
+            <div className='relative w-full h-14 flex justify-center items-center'>
+              <div onClick={onClose} className='absolute left-5 cursor-pointer'>
+                <IoIosArrowBack className='w-6 h-6' />
+              </div>
+              <h1 className='text-center text-sm sm:text-base font-semibold uppercase mx-14'>
+                {dish.name}
+              </h1>
+            </div>
+          </div>
+
+          {dish.image && (
+            <div className='relative h-60 w-full sm:h-48 sm:w-96 overflow-hidden mx-auto sm:rounded-lg'>
+              <Image
+                src={dish.image}
+                alt={dish.name}
+                fill
+              />
+            </div>
+          )}
+
+          <div className='mx-8 my-4 flex flex-col gap-2'>
+            <h2 className='text-xl font-bold leading-tight'>
+              {dish.name}
+            </h2>
+            <p className='whitespace-pre-line leading-5 text-muted-foreground'>
+              {dish.description}
+            </p>
+            <span className='mt-4 font-bold'>
+              {formatPrice(dish.price)}
+            </span>
+          </div>
+
           {/* ADDITIONALS */}
-          <ul className='border-b'>
+          <ul className='sm:max-h-[356px] sm:overflow-y-auto border-b'>
             {dish.additionalCategories.map((category, i) => (
               <li 
                 key={category.id} 
                 className=""
               >
 
-                <div className="py-3 px-8 bg-zinc-200/50 flex justify-between items-center">
+                <div className="sticky top-[56px] z-30 sm:static py-3 px-8 bg-zinc-200 flex justify-between items-center">
+                  {/* <input type="text" {...fields[i]}/> */}
+                  <div>
+                    <h3 className="font-semibold">
+                      {category.name}
+                    </h3>
+
+                    <span className="text-sm text-muted-foreground">
+                      {/* sem limites e obrigatoirio */}
+                      {category.maxItems === 0 && category.isRequired && (
+                        'Escolha pelo menos 1 opção.'
+                      )}
+
+                      {/* sem limites e opcional */}
+                      {category.maxItems === 0 && !category.isRequired && (
+                        'Escolha quantas opções quiser.'
+                      )}
+
+                      {/* 1 item e obrigatoirio */}
+                      {category.maxItems === 1 && category.isRequired && (
+                        'Escolha 1 opção.'
+                      )}
+
+                      {/* 1 item e opcional */}
+                      {category.maxItems === 1 && !category.isRequired && (
+                        'Escolha até 1 opção.'
+                      )}
+
+                      {/* mais q 1 item e obrigatorio */}
+                      {category.maxItems > 1 && category.isRequired && (
+                        `Escolha ${category.maxItems} opções.`
+                      )}
+
+                      {/* mais q 1 item e opcional */}
+                      {category.maxItems > 1 && !category.isRequired && (
+                        `Escolha até ${category.maxItems} opções`
+                      )}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-xs font-semibold text-white tracking-wider bg-zinc-500/80 rounded-sm px-2 py-1">
+                      {category.isRequired ? 'Obrigatório' : 'Opcional'}
+                    </span>
+                  </div>
+                </div>
+
+                <ul className="divide-y">
+                  {category.additionals.map((additional, index) => (
+                    <li
+                      key={additional.id}
+                      className="flex justify-between items-center gap-3 py-6 px-8"
+                    >
+                      <div className="text-sm font-medium sm:text-base sm:font-normal">
+                        <span>
+                          {additional.name}
+                        </span>
+                        {!!additional.price && (
+                          <span>
+                            {` + ${formatPrice(additional.price)}`}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-4 transition">
+                        {amountAdditional(additional) && (
+                          <>
+                            <button
+                              onClick={() => handleRemoveAdditional(additional.id)}
+                              type='button'
+                              className='rounded-full bg-red-500 p-1 disabled:bg-zinc-300'
+                              disabled={isLoading}
+                            >
+                              <IoMdRemove className='w-6 h-6 text-white'/>
+                            </button>
+                            <span>
+                              {amountAdditional(additional)}
+                            </span>
+                          </>
+                        )}
+                        <button
+                          onClick={() => handleAddAdditional(additional, category.id)}
+                          disabled={isLoading}
+                          type='button'
+                          className='rounded-full bg-green-500 p-1'
+                        >
+                          <IoMdAdd className='w-6 h-6 text-white'/>
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+            {dish.additionalCategories.map((category, i) => (
+              <li 
+                key={category.id} 
+                className=""
+              >
+
+                <div className="sticky top-[56px] z-30 sm:static sm:top-auto sm:z-auto  py-3 px-8 bg-zinc-200 flex justify-between items-center">
                   {/* <input type="text" {...fields[i]}/> */}
                   <div>
                     <h3 className="font-semibold">
@@ -283,8 +382,9 @@ const CartForm: React.FC<CartFormProps> = ({
               )}
             />
           </div>
-
-          <div className='stroke-inherit bottom-0 z-40 bg-white flex-1 flex justify-between flex-wrap gap-6 items-end px-6 py-3'>
+          
+          
+          <div className='sticky bottom-0 z-40 bg-white flex-1 flex justify-between flex-wrap gap-6 items-end px-6 py-3'>
             <div className='flex items-center gap-3'>
               <button
                 onClick={handleRemoveDish}
