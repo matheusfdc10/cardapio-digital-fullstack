@@ -15,6 +15,10 @@ const Logo: React.FC<LogoProps> = ({
                 fill
                 sizes="200"
                 className="object-contain"
+                // className={cn(
+                //     "object-contain",
+                //     isLoading && "scale-105 bg-slate-900 opacity-0 grayscale animate-pulse",
+                // )}
             />
         </div>
     );

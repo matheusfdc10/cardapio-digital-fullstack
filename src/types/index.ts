@@ -36,3 +36,11 @@ export type OpeningHoursType = OpeningHours & {
 export type DeliveryAreaType = DeliveryArea & {
     restaurant?: Restaurant | null;
 }
+
+export type MenuType = Omit<DishCategory, 'description'> & {
+    dishes: (Dish & {
+      additionalCategories: (AdditionalCategory & {
+        additionals: Additional[];
+      })[];
+    })[];
+};

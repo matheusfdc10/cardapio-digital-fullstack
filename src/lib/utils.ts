@@ -3,6 +3,7 @@ import { twMerge } from "tailwind-merge"
 import axios from "axios";
 import { Address } from "@prisma/client";
 import { toZonedTime } from 'date-fns-tz';
+import { OpeningHoursType } from "@/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -18,11 +19,65 @@ export function date(): Date {
   const zonedDate = toZonedTime(now, timeZone);
   return zonedDate;
 }
-
+// 02-1031128659
 export function getTodayWeekdayIndex(): number {
   const zonedDate = date();
   return zonedDate.getDay();
 }
+
+export const formatPrice = (price: number | null) => {
+  if (!price) return 'R$ 0,00';
+
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  }).format(price)
+}
+
+export function isOpenToday(schedule: OpeningHoursType[]) {
+  const daysOfWeek = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+  const currentDayOfWeek = date().getDay();
+  const currentTime = date().toTimeString().slice(0, 5);
+
+  // Verificar se o horário atual está dentro de algum dos horários de abertura e fechamento de hoje
+  const todaySchedules = schedule.filter(entry => entry.dayOfWeek === currentDayOfWeek);
+
+  for (const todaySchedule of todaySchedules) {
+    const { opensAt, closesAt } = todaySchedule;
+    if (currentTime >= opensAt && currentTime <= closesAt) {
+      return {
+        status: true,
+        hour: closesAt,
+        dayOfWeek: daysOfWeek[currentDayOfWeek]
+      };
+    }
+  }
+
+  // Encontrar o próximo horário de abertura
+  for (let i = 1; i <= 7; i++) {
+    const nextDay = (currentDayOfWeek + i) % 7;
+    const nextDaySchedules = schedule.filter(entry => entry.dayOfWeek === nextDay);
+    if (nextDaySchedules.length > 0) {
+      const nextOpenSchedule = nextDaySchedules[0]; // Supondo que o primeiro horário de abertura do próximo dia é o que precisamos
+      return {
+        status: false,
+        hour: nextOpenSchedule.opensAt,
+        dayOfWeek: daysOfWeek[nextDay]
+      };
+    }
+  }
+
+  // Caso não haja horários futuros definidos, retornamos null ou uma estrutura padrão
+  return {
+    status: false,
+    hour: null,
+    dayOfWeek: null
+  };
+}
+
+export const removeAccents = (str: string) => {
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+};
 
 // type searchCEP = {
 //   uf: string;

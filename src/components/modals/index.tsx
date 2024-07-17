@@ -11,6 +11,7 @@ interface ModalProps {
     onClose: () => void;
     children: React.ReactNode;
     maxWidth?: number;
+    smFull?: boolean
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -19,7 +20,8 @@ const Modal: React.FC<ModalProps> = ({
     children,
     title,
     description,
-    maxWidth
+    maxWidth,
+    smFull,
 }) => {
 
     const onChange = () => {
@@ -33,66 +35,64 @@ const Modal: React.FC<ModalProps> = ({
     };
 
     useEffect(() => {
+        if (!isOpen) return
         const body = document.getElementsByTagName("body");
         body[0].classList.add("overflow-hidden");
-        
         return () => {
             body[0].classList.remove("overflow-hidden");
         }
-    }, []);
+    }, [isOpen]);
 
     if (!isOpen) return null;
 
     return (
-        <div className='fixed z-40 w-screen h-screen top-0 left-0 right-0'>
+        <div className='fixed z-[50] w-screen h-screen top-0 left-0 right-0'>
             <div 
                 className='relative w-full h-full bg-zinc-900/50 backdrop-blur-sm'
             >
                 <div className='fixed inset-0 z-10 overflow-y-auto'>
                     <div
                         onClick={handleOutsideClick}
-                        className='
-                            flex
-                            min-h-full
-                            items-center
-                            justify-center
-                            px-4
-                            py-8
-                        '
+                        className={cn(
+                            'flex min-h-full items-center justify-center',
+                            smFull ? 'px-0 py-0 sm:px-4 sm:py-8' : 'px-4 py-8'
+                        )}
                     >   
                         <div className={cn(
-                            `relative z-50 p-6 bg-white shadow-md border rounded-lg py-6 w-full`,
-                            maxWidth ? '' : 'max-w-lg'
-
+                            `relative z-50 min-h-screen bg-white shadow-md w-full`,
+                            maxWidth ? '' : 'max-w-[640px]',
+                            smFull ? 'sm:rounded-lg sm:overflow-hidden' : 'p-6 border rounded-lg'
                         )}
                             style={{
                                 maxWidth: `${maxWidth}px`
                             }}
                         >
-                            <div 
-                                className="
-                                    absolute 
-                                    right-0 
-                                    top-0 
-                                    pr-3 
-                                    pt-3
-                                    sm:block
-                                    z-10
-                                "
-                            >
-                                <button
-                                    type="button"
+                            {!smFull && (
+                                <div 
                                     className="
-                                        rounded-md 
-                                        bg-transparent
-                                        text-neutral-950 
-                                        hover:text-neutral-950/75 
+                                        absolute 
+                                        right-0 
+                                        top-0 
+                                        pr-3 
+                                        pt-3
+                                        sm:block
+                                        z-10
                                     "
-                                    onClick={onChange}
                                 >
-                                    <X className="h-5 w-5"  aria-hidden="true" />
-                                </button>
-                            </div>
+                                    <button
+                                        type="button"
+                                        className="
+                                            rounded-md 
+                                            bg-transparent
+                                            text-neutral-950 
+                                            hover:text-neutral-950/75 
+                                        "
+                                        onClick={onChange}
+                                    >
+                                        <X className="h-5 w-5"  aria-hidden="true" />
+                                    </button>
+                                </div>
+                            )}
                             {(title || description) && (
                                 <div className='flex flex-col space-y-1.5 text-center sm:text-left mb-4'>
                                     <h2 className="text-xl font-semibold leading-none tracking-tight">
@@ -104,8 +104,8 @@ const Modal: React.FC<ModalProps> = ({
                                 </div>
                             )}
                             <div>
-                                {children}
                             </div>
+                                {children}
                         </div>
                     </div>
                 </div>

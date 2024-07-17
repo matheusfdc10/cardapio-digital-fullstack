@@ -6,9 +6,9 @@ const MenuLayout: React.FC<MenuLayoutProps> = ({
     children
 }) => {
     return (
-        <main>
+        <>
             {children}
-        </main>
+        </>
     );
 }
  
