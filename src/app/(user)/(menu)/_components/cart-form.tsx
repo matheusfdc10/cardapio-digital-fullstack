@@ -452,18 +452,17 @@ const CartForm: React.FC<CartFormProps> = ({
                         control={form.control}
                         name={`additionalCategories.${indexCategory}`}
                         render={({ field }) => (
-                          
-                            <FormControl>
-                              <input
-                                className="w-0 h-0"
-                                disabled={isLoading}
-                                name={field.name}
-                                ref={field.ref}
-                                onBlur={field.onBlur}
-                                {...field.onChange}
-                              />
-                            </FormControl>
-                          
+                          <FormControl>
+                            <input
+                              readOnly
+                              className="w-0 h-0 focus:top-0"
+                              disabled={isLoading}
+                              name={field.name}
+                              ref={field.ref}
+                              onBlur={field.onBlur}
+                              // {...field.onChange}
+                            />
+                          </FormControl>
                         )}
                       />
                       {categoryIsValid[category.id] ? (
