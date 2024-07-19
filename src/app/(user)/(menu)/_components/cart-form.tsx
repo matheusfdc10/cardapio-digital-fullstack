@@ -10,7 +10,7 @@ import { MenuType } from '@/types';
 import { Textarea } from '@/components/ui/textarea';
 import Image from '@/components/image';
 import { IoIosArrowBack, IoMdAdd, IoMdRemove } from 'react-icons/io';
-import { cn, formatPrice } from '@/lib/utils';
+import { capitalizeFirstLetter, cn, formatPrice } from '@/lib/utils';
 import { useState } from "react";
 import { FaCheck } from "react-icons/fa6";
 
@@ -144,8 +144,7 @@ const CartForm: React.FC<CartFormProps> = ({
     [key: string]: boolean | undefined;
   };
   const [categoryIsValid, setCategoryIsValid] = useState<CategoryIsValid>({})
-
-  console.log(categoryIsValid)
+  
   const form = useForm<CartType>({
     resolver: zodResolver(CartItemSchema),
     defaultValues: initialData || {
@@ -196,18 +195,18 @@ const CartForm: React.FC<CartFormProps> = ({
   }
 
   const setValidCategory = (index: string) => {
-    if (categoryIsValid[index]) {
-      setCategoryIsValid((categories) => ({
-        ...categories,
-        [index]: false,
-      }))
-    } else {
-      setCategoryIsValid((categories) => ({
-        ...categories,
-        [index]: true,
-      }))
-    }
-  }
+    setCategoryIsValid((categories) => {
+      const { [index]: _, ...newCategories } = categories;
+      if (categoryIsValid[index]) {
+        return newCategories; // Remove a chave index do objeto
+      } else {
+        return {
+          ...newCategories,
+          [index]: true, // Adiciona a chave index com valor true
+        };
+      }
+    });
+  };
   
   // adicionar qntidade de adiconai
   const handleAddAdditional = async (item: CartAdditionalType, indexCategory: number) => {
@@ -359,7 +358,7 @@ const CartForm: React.FC<CartFormProps> = ({
 
           <div className='mx-4 sm:mx-8 my-4 flex flex-col gap-2'>
             <h2 className='text-xl font-bold leading-tight'>
-              {dish.name}
+              {capitalizeFirstLetter(dish.name)}
             </h2>
             <p className='whitespace-pre-line leading-5 text-muted-foreground'>
               {dish.description}
@@ -405,15 +404,15 @@ const CartForm: React.FC<CartFormProps> = ({
                   key={category.id} 
                   className=""
                 >
-                  <div className="sticky top-[56px] z-30 sm:static py-3 px-4 sm:px-8 bg-zinc-200 flex justify-between items-center">
+                  <div className="sticky top-[56px] z-30 sm:static py-3 px-4 sm:px-8 bg-zinc-200 flex justify-between gap-4 items-center">
                     {/* <input type="text" {...fields[i]}/> */}
-                    <div>
-                      <p className="font-semibold leading-5">
-                        {category.name}
+                    <div className="flex-1 flex flex-col gap-2 justify-between">
+                      <p className="font-semibold text-sm sm:text-base leading-5 break-words">
+                        {capitalizeFirstLetter(category.name)}
                       </p>
 
                       <span className={cn(
-                        "text-sm",
+                        "text-xs sm:text-sm",
                         !!categoryAdditionalsError(indexCategory) ? "text-red-500 font-semibold" : "text-muted-foreground"
 
                       )}>
@@ -448,16 +447,38 @@ const CartForm: React.FC<CartFormProps> = ({
                         )}
                       </span>
                     </div>
-                    <div className="flex-1 text-end transition">
+                    <div className="text-end transition">
+                      <FormField
+                        control={form.control}
+                        name={`additionalCategories.${indexCategory}`}
+                        render={({ field }) => (
+                          
+                            <FormControl>
+                              <input
+                                className="w-0 h-0"
+                                disabled={isLoading}
+                                name={field.name}
+                                ref={field.ref}
+                                onBlur={field.onBlur}
+                                {...field.onChange}
+                              />
+                            </FormControl>
+                          
+                        )}
+                      />
                       {categoryIsValid[category.id] ? (
                         <FaCheck className="h-6 w-6 text-green-500 inline-block" />
                       ) : (
                         <>
-                          <span className="inline-block text-xs font-semibold text-white tracking-wider bg-zinc-500/80 rounded-sm px-2 py-1 h-6">
+                          <span className="inline-block text-[10px] sm:text-xs font-semibold text-white tracking-wider bg-zinc-500/80 rounded-sm px-2 py-1 h-6">
                             {quantityAdditionalSelected(indexCategory)}
                             {!!category.maxItems ? `/${category.maxItems}` : ' itens'}
                           </span>
-                          <span className="inline-block text-xs font-semibold text-white tracking-wider bg-zinc-500/80 rounded-sm px-2 py-1 h-6 ml-2">
+                          <span className={cn(
+                            "inline-block text-[10px] line sm:text-xs font-semibold text-white tracking-wider  rounded-sm px-2 py-1 h-6 ml-2",
+                            !!categoryAdditionalsError(indexCategory) ? "bg-red-500/80" : "bg-zinc-500/80"
+
+                          )}>
                             {category.isRequired ? 'Obrigatório' : 'Opcional'}
                           </span>
                         </>
@@ -465,6 +486,7 @@ const CartForm: React.FC<CartFormProps> = ({
                       {/* <span className="block text-xs text-red-500 font-bold mt-1">
                         {categoryAdditionalsError(indexCategory)}
                       </span> */}
+
                     </div>
                   </div>
 
@@ -472,14 +494,14 @@ const CartForm: React.FC<CartFormProps> = ({
                     {category.additionals.map((additional, indexAdditional) => (
                       <li
                         key={additional.id}
-                        className="flex justify-between items-center gap-3 py-6 px-4 sm:px-8"
+                        className="flex justify-between items-center gap-4 py-6 px-4 sm:px-8"
                       >
                         <div className="text-sm font-medium sm:text-base sm:font-normal">
                           <span>
-                            {additional.name}
+                            {capitalizeFirstLetter(additional.name)}
                           </span>
                           {!!additional.price && (
-                            <span>
+                            <span className="whitespace-nowrap">
                               {` + ${formatPrice(additional.price)}`}
                             </span>
                           )}
@@ -490,7 +512,7 @@ const CartForm: React.FC<CartFormProps> = ({
                               <button
                                 onClick={() => handleRemoveAdditional(additional, indexCategory)}
                                 type='button'
-                                className='rounded-full bg-red-500 p-1 disabled:bg-zinc-300'
+                                className='rounded-full bg-red-500 p-1 disabled:bg-zinc-300 active:scale-95 disabled:scale-100 disabled:cursor-not-allowed'
                                 disabled={isLoading}
                               >
                                 <IoMdRemove className='w-6 h-6 text-white'/>
@@ -504,7 +526,7 @@ const CartForm: React.FC<CartFormProps> = ({
                             onClick={() => handleAddAdditional(additional, indexCategory)}
                             disabled={isLoading || quantityAdditionalSelected(indexCategory) === category.maxItems && !(category.maxItems === 0)}
                             type='button'
-                            className='rounded-full bg-green-500 disabled:opacity-50 p-1'
+                            className='rounded-full bg-green-500 disabled:opacity-50 p-1 active:scale-95 disabled:scale-100 disabled:cursor-not-allowed'
                           >
                             <IoMdAdd className='w-6 h-6 text-white'/>
                           </button>
@@ -537,13 +559,12 @@ const CartForm: React.FC<CartFormProps> = ({
             />
           </div>
           
-          
           <div className='sticky bottom-0 z-40 bg-white flex-1 flex  flex-wrap gap-6 items-end px-6 py-3'>
             <div className='flex items-center gap-3'>
               <button
                 onClick={handleRemoveDish}
                 type='button'
-                className='rounded-full bg-red-500 p-1 disabled:bg-zinc-300'
+                className='rounded-full bg-red-500 p-1 disabled:bg-zinc-300 active:scale-95 disabled:scale-100 disabled:cursor-not-allowed'
                 disabled={isLoading || form.watch('quantity') === 1}
               >
                 <IoMdRemove className='w-6 h-6 text-white'/>
@@ -555,7 +576,7 @@ const CartForm: React.FC<CartFormProps> = ({
                 onClick={handleAddDish}
                 disabled={isLoading}
                 type='button'
-                className='rounded-full bg-green-500 p-1'
+                className='rounded-full bg-green-500 p-1 active:scale-95 disabled:scale-100 disabled:cursor-not-allowed'
               >
                 <IoMdAdd className='w-6 h-6 text-white'/>
               </button>
@@ -564,7 +585,10 @@ const CartForm: React.FC<CartFormProps> = ({
             <Button 
               type="submit" 
               disabled={isLoading}
-              className='flex-1'
+              className={cn(
+                'flex-1',
+                !!Object.keys(form.formState.errors).length && 'opacity-50'
+              )}
             >
               Adicionar • {formatPrice(totalPrice)}
             </Button>

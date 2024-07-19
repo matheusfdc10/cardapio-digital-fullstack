@@ -75,6 +75,11 @@ export function isOpenToday(schedule: OpeningHoursType[]) {
   };
 }
 
+export function capitalizeFirstLetter(string?: string) {
+  if (!string) return ''
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 export const removeAccents = (str: string) => {
   return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 };
