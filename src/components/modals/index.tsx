@@ -68,7 +68,7 @@ const Modal: React.FC<ModalProps> = ({
                         <div className={cn(
                             `relative z-50 bg-white shadow-md w-full flex flex-col overflow-hidden`,
                             maxWidth ? '' : 'max-w-[640px]',
-                            smFull ? 'sm:rounded-lg overflow-y-auto sm:overflow-hidden h-[100dvh] sm:h-auto' : image ? 'rounded-lg w-auto' : 'p-6 border rounded-lg'
+                            smFull ? 'sm:rounded-lg overflow-y-auto sm:overflow-hidden h-[100dvh] sm:h-auto relative' : image ? 'rounded-lg w-auto' : 'p-6 border rounded-lg'
                         )}
                             style={{
                                 maxWidth: `${maxWidth}px`,
