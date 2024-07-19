@@ -12,6 +12,7 @@ import { IoIosArrowBack, IoMdAdd, IoMdRemove } from 'react-icons/io';
 import { capitalizeFirstLetter, cn, formatPrice } from '@/lib/utils';
 import { useState } from "react";
 import { FaCheck } from "react-icons/fa6";
+import { toast } from "@/components/ui/use-toast";
 
 const CartAdditionalSchema = z.object({
   id: z.string(),
@@ -211,9 +212,9 @@ const CartForm: React.FC<CartFormProps> = ({
     if (maxItems === 0) {
       form.setValue(`additionalCategories.${indexCategory}.additionals.${indexAdditional}.quantity`, item.quantity + 1)
       if (quantityItems === 0) {
-        const res = await form.trigger(`additionalCategories.${indexCategory}`)
-        form.setFocus(`additionalCategories.${indexCategory + 1}`, {shouldSelect:res})
-        if (res && category.isRequired) {
+        const isValid = await form.trigger(`additionalCategories.${indexCategory}`)
+        form.setFocus(`additionalCategories.${indexCategory + 1}`, {shouldSelect:isValid})
+        if (isValid && category.isRequired) {
           setValidCategory(category.id)
         }
       }
@@ -222,9 +223,9 @@ const CartForm: React.FC<CartFormProps> = ({
     if (maxItems > quantityItems) {
       form.setValue(`additionalCategories.${indexCategory}.additionals.${indexAdditional}.quantity`, item.quantity + 1)
       if (maxItems === quantityItems + 1) {
-        const res = await form.trigger(`additionalCategories.${indexCategory}`)
-        form.setFocus(`additionalCategories.${indexCategory + 1}`, {shouldSelect:res})
-        if (res && category.isRequired) {
+        const isValid = await form.trigger(`additionalCategories.${indexCategory}`)
+        form.setFocus(`additionalCategories.${indexCategory + 1}`, {shouldSelect:isValid})
+        if (isValid && category.isRequired) {
           setValidCategory(category.id)
         }
       }
@@ -265,7 +266,7 @@ const CartForm: React.FC<CartFormProps> = ({
     if (quantityItems > 0) {
       form.setValue(`additionalCategories.${indexCategory}.additionals.${indexAdditional}.quantity`, item.quantity - 1)
       if (quantityItems === 1 && category.isRequired) {
-        const res = await form.trigger(`additionalCategories.${indexCategory}`)
+        const isValid = await form.trigger(`additionalCategories.${indexCategory}`)
         if ((quantityItems === category.maxItems || category.maxItems === 0)  && category.isRequired) {
           setValidCategory(category.id)
         }
@@ -309,6 +310,16 @@ const CartForm: React.FC<CartFormProps> = ({
     return form.formState.errors?.additionalCategories?.[index]?.message;
   }
 
+  const isValidToast = async () => {
+    const isValid = await await form.trigger()
+    if (!isValid) {
+      toast({
+        title: 'Preencha todos campos obrigatórios.',
+        variant: 'destructive'
+      })
+    }
+  }
+  
   return (
     <>
       <Form {...form}>
@@ -376,7 +387,7 @@ const CartForm: React.FC<CartFormProps> = ({
                         </FormControl>
                       )}
                     />
-                    <h3 className="font-semibold text-sm sm:text-base leading-5 break-words">
+                    <h3 className="font-semibold text-base leading-5 break-words">
                       {capitalizeFirstLetter(category.name)}
                     </h3>
                     <div className="flex gap-2 justify-between items-center">
@@ -532,6 +543,7 @@ const CartForm: React.FC<CartFormProps> = ({
             <Button 
               type="submit" 
               disabled={isLoading}
+              onClick={isValidToast}
               className={cn(
                 'flex-1',
                 !!Object.keys(form.formState.errors).length && 'opacity-50'
