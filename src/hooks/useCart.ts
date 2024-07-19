@@ -9,6 +9,14 @@ export interface CartAdditional {
   categoryId: string;
 }
 
+// export interface CartCategryAdditional {
+//   id: string;
+//   name: string;
+//   isRequired: boolean;
+//   maxItems: number;
+//   additionals: CartAdditional;
+// }
+
 export interface CartItem {
   id: string;
   name: string;
