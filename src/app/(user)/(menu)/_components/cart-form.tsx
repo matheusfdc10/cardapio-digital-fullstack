@@ -65,7 +65,6 @@ const CartCategryAdditionalSchema = z.object({
   }
 });
 
-
 // .refine((category) => {
 //   const amountAdditionals = category.additionals.reduce((amount, additional) => additional.quantity + amount, 0)
 //   const maxItems = category.maxItems
@@ -201,7 +200,6 @@ const CartForm: React.FC<CartFormProps> = ({
       }
     });
   };
-  
   
   const handleAddAdditional = async (item: CartAdditionalType, indexCategory: number) => {
     const category = form.watch(`additionalCategories.${indexCategory}`) as CartCategryAdditionalType;
@@ -351,34 +349,6 @@ const CartForm: React.FC<CartFormProps> = ({
               {formatPrice(dish.price)}
             </span>
           </div>
-
-          {/* <FormField
-            control={form.control}
-            name="additionalCategories"
-            render={({ field }) => (
-              <FormItem>
-                {field.value.map((category, indexCategory) => (
-                  <FormItem key={indexCategory}>
-                    <div>
-                      <h2>{category.name}</h2>
-                    </div>
-                    <FormControl>
-                      {category.additionals.map((additional, indexItem) => (
-                        <FormItem key={indexItem}>
-                          <div>
-                            {additional.name} + {additional.price}
-                          </div>
-                          <FormControl>
-                            - 0 +
-                          </FormControl>
-                        </FormItem>
-                      ))}
-                    </FormControl>
-                  </FormItem>
-                ))}
-              </FormItem>
-            )}
-          /> */}
 
           {/* ADDITIONALS */}
           {!!form.watch('additionalCategories').length && (
