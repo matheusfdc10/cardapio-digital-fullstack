@@ -7,12 +7,13 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { MenuType } from '@/types';
 import { Textarea } from '@/components/ui/textarea';
-import Image from '@/components/image';
 import { IoIosArrowBack, IoMdAdd, IoMdRemove } from 'react-icons/io';
 import { capitalizeFirstLetter, cn, formatPrice } from '@/lib/utils';
 import { useState } from "react";
 import { FaCheck } from "react-icons/fa6";
 import { toast } from "@/components/ui/use-toast";
+import Image from '@/components/image';
+import useCart from "@/hooks/useCart";
 
 const CartAdditionalSchema = z.object({
   id: z.string(),
@@ -21,7 +22,7 @@ const CartAdditionalSchema = z.object({
   quantity: z.number().int().nonnegative(),
 });
 
-const CartCategryAdditionalSchema = z.object({
+const AdditionalCartCategrySchema = z.object({
   id: z.string(),
   name: z.string(),
   isRequired: z.boolean(),
@@ -116,17 +117,22 @@ const CartCategryAdditionalSchema = z.object({
 
 const CartItemSchema = z.object({
   id: z.string(),
+  dishId: z.string(),
   name: z.string(),
   url: z.string().optional(),
   price: z.number().nonnegative(),
   comment: z.string().optional(),
   quantity: z.number().int().nonnegative(),
-  additionalCategories: z.array(CartCategryAdditionalSchema),
+  additionalCategories: z.array(AdditionalCartCategrySchema),
 });
 
 type CartAdditionalType = z.infer<typeof CartAdditionalSchema>;
-type CartCategryAdditionalType = z.infer<typeof CartCategryAdditionalSchema>;
+type CartCategryAdditionalType = z.infer<typeof AdditionalCartCategrySchema>;
 type CartType = z.infer<typeof CartItemSchema>;
+
+type CategoryIsValid = {
+  [key: string]: boolean | undefined;
+};
 
 interface CartFormProps {
   dish: MenuType['dishes'][number];
@@ -139,15 +145,14 @@ const CartForm: React.FC<CartFormProps> = ({
   initialData, 
   onClose 
 }) => {
-  type CategoryIsValid = {
-    [key: string]: boolean | undefined;
-  };
+  const cart = useCart()
   const [categoryIsValid, setCategoryIsValid] = useState<CategoryIsValid>({})
   
   const form = useForm<CartType>({
     resolver: zodResolver(CartItemSchema),
     defaultValues: initialData || {
-      id: dish.id,
+      id: crypto.randomUUID(),
+      dishId: dish.id,
       name: dish.name,
       url: dish.image || undefined,
       price: dish.price,
@@ -173,7 +178,12 @@ const CartForm: React.FC<CartFormProps> = ({
   });
   
   const onSubmit = (data: CartType) => {
-    console.log(data);
+    if (initialData) {
+      cart.updateItemFromCart(data)
+    } else {
+      cart.addToCart(data)
+    }
+    onClose()
   };
 
   const isLoading = form.formState.isSubmitting;

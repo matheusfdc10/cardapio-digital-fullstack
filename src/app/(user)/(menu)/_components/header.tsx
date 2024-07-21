@@ -51,7 +51,7 @@ export const Header: React.FC<HeaderProps> = ({
 
             <div className="hidden sm:block">
                 <div className="flex gap-6 mt-6 mr-5">
-                    <div className="relative cursor-pointer hover:scale-[1.03] active:scale-100">
+                    <div className="relative cursor-pointer sm:hover:scale-[1.03] sm:active:scale-100">
                     <FaUser className="w-6 h-6"/>
                     </div>
 

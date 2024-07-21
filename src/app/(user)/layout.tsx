@@ -1,5 +1,5 @@
 import { getRestaurant } from "@/actions/admin/restaurant";
-import { RestaurantProvider } from "@/contexts/restaurant-context";
+import { MenuProvider } from "@/contexts/menu";
 
 interface AdminLayoutProps {
     children: React.ReactNode;
@@ -8,17 +8,17 @@ interface AdminLayoutProps {
 const AdminLayout: React.FC<AdminLayoutProps> = async ({
     children
 }) => {
-    // const restaurant = await getRestaurant()
+    const restaurant = await getRestaurant()
 
-    // if(restaurant.data === null) {
-    //     return <div>Restaurant not found</div>
-    // }
+    if(restaurant.data === null) {
+        return <div>Restaurant not found</div>
+    }
     
     return (
         <div className="max-w-screen-2xl min-h-screen mx-auto flex flex-col">
-            {/* <RestaurantProvider restaurant={restaurant.data}> */}
+            <MenuProvider restaurant={restaurant.data}>
                 {children}
-            {/* </RestaurantProvider> */}
+            </MenuProvider>
         </div>
     );
 }

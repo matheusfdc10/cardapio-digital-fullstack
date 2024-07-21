@@ -1,39 +1,42 @@
+import { toast } from "@/components/ui/use-toast";
+import { date } from "@/lib/utils";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-export interface CartAdditional {
+export interface CartAdditionalType {
   id: string;
   name: string;
   price: number;
   quantity: number;
-  categoryId: string;
 }
 
-// export interface CartCategryAdditional {
-//   id: string;
-//   name: string;
-//   isRequired: boolean;
-//   maxItems: number;
-//   additionals: CartAdditional;
-// }
-
-export interface CartItem {
+export interface CartAdditionalCartCategoryType {  // Corrigido o nome para 'CartAdditionalCartCategoryType'
   id: string;
   name: string;
-  url: string;
+  isRequired: boolean;
+  maxItems: number;
+  additionals: CartAdditionalType[];  // Corrigido para ser um array de 'CartAdditional'
+}
+
+export interface CartItemType {
+  id: string;
+  dishId: string;
+  name: string;
+  url?: string;
   price: number;
-  comment: string;
+  comment?: string;
   quantity: number;
-  additionals: CartAdditional[];
+  additionalCategories: CartAdditionalCartCategoryType[];  // Corrigido o nome para 'CartAdditionalCartCategoryType'
 }
 
 interface CartState {
-  cart: CartItem[];
+  cart: CartItemType[];
   totalItems: number;
   totalAmount: number;
-  addToCart: (item: CartItem) => void;
+  cartCreatedAt: Date;
+  addToCart: (item: CartItemType) => void;
   removeFromCart: (id: string) => void;
-  updateCart: (item: CartItem) => void;
+  updateItemFromCart: (item: CartItemType) => void;
   clearCart: () => void;
 }
 
@@ -43,23 +46,26 @@ const useCart = create(
       cart: [],
       totalItems: 0,
       totalAmount: 0,
-
+      cartCreatedAt: date(),
       addToCart: (item) => set((state) => {
         const existingItemIndex = state.cart.findIndex(cartItem => cartItem.id === item.id);
-        let updatedCart;
 
         if (existingItemIndex >= 0) {
-          // Atualizar item existente
-          const filterCart = state.cart.filter(cartItem => cartItem.id !== item.id);
-          updatedCart = [...filterCart, item]
-        } else {
-          // Adicionar novo item ao carrinho
-          updatedCart = [...state.cart, item];
+          toast({
+            title: 'Error',
+            variant: "destructive"
+          })
+
+          return state;
         }
 
+        const updatedCart = [...state.cart, item];
+
         const updatedTotalItems = updatedCart.reduce((acc, cartItem) => acc + cartItem.quantity, 0);
-        const updatedTotalAmount = updatedCart.reduce((acc, cartItem) => acc + cartItem.price * cartItem.quantity +
-          cartItem.additionals.reduce((addAcc, additional) => addAcc + additional.price * additional.quantity, 0), 0);
+        const updatedTotalAmount = updatedCart.reduce((acc, cartItem) => (cartItem.price * cartItem.quantity) + acc +
+        cartItem.quantity *  cartItem.additionalCategories.reduce((addAcc, category) =>
+            addAcc + category.additionals.reduce((subAddAcc, additional) =>
+              subAddAcc + (additional.price * additional.quantity), 0), 0), 0);
 
         return { cart: updatedCart, totalItems: updatedTotalItems, totalAmount: updatedTotalAmount };
       }),
@@ -67,13 +73,15 @@ const useCart = create(
       removeFromCart: (id) => set((state) => {
         const updatedCart = state.cart.filter(cartItem => cartItem.id !== id);
         const updatedTotalItems = updatedCart.reduce((acc, cartItem) => acc + cartItem.quantity, 0);
-        const updatedTotalAmount = updatedCart.reduce((acc, cartItem) => acc + cartItem.price * cartItem.quantity +
-          cartItem.additionals.reduce((addAcc, additional) => addAcc + additional.price * additional.quantity, 0), 0);
+        const updatedTotalAmount = updatedCart.reduce((acc, cartItem) => acc + (cartItem.price * cartItem.quantity) +
+          cartItem.additionalCategories.reduce((addAcc, category) =>
+            addAcc + category.additionals.reduce((subAddAcc, additional) =>
+              subAddAcc + (additional.price * additional.quantity), 0), 0), 0);
 
         return { cart: updatedCart, totalItems: updatedTotalItems, totalAmount: updatedTotalAmount };
       }),
 
-      updateCart: (item) => set((state) => {
+      updateItemFromCart: (item) => set((state) => {
         const updatedCart = state.cart.map(cartItem =>
           cartItem.id === item.id
             ? item
@@ -82,7 +90,9 @@ const useCart = create(
 
         const updatedTotalItems = updatedCart.reduce((acc, cartItem) => acc + cartItem.quantity, 0);
         const updatedTotalAmount = updatedCart.reduce((acc, cartItem) => acc + cartItem.price * cartItem.quantity +
-          cartItem.additionals.reduce((addAcc, additional) => addAcc + additional.price * additional.quantity, 0), 0);
+          cartItem.additionalCategories.reduce((addAcc, category) =>
+            addAcc + category.additionals.reduce((subAddAcc, additional) =>
+              subAddAcc + additional.price * additional.quantity, 0), 0), 0);
 
         return { cart: updatedCart, totalItems: updatedTotalItems, totalAmount: updatedTotalAmount };
       }),
@@ -97,6 +107,7 @@ const useCart = create(
 );
 
 export default useCart;
+
 
 
 

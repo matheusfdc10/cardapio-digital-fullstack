@@ -5,11 +5,11 @@ import { auth, signOut } from "@/auth";
 // import { RestaurantContext } from "@/contexts/restaurant-context";
 import { Header } from "./_components/header";
 import { getMenu } from "@/actions/user/menu";
-import Image from "@/components/image";
-import { formatPrice } from "@/lib/utils";
 import { Menu } from "./_components/menu";
 import { Footer } from "./_components/footer";
 import FilterSection from "./_components/filter-section";
+import { TabBar } from "./_components/tab-bar";
+import { InputSearch } from "./_components/input-search";
 
 const MenuPage = async () => {
   // const session = await auth();
@@ -39,9 +39,13 @@ const MenuPage = async () => {
       <Header restaurant={restaurant.data} />
       <main className="flex-grow">
         <FilterSection menu={menu.data} />
+        <div className="mx-6 sm:mx-8 my-6 max-w-sm hidden sm:block">
+          <InputSearch placeholder="Buscar por um item"/>
+        </div>
         <Menu data={menu.data}/>
       </main>
       <Footer />
+      <TabBar />
     </>
   );
 }

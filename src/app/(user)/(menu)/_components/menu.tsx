@@ -3,9 +3,9 @@
 import { MenuType } from "@/types";
 import { MenuItem } from "./menu-item";
 import { MenuSection } from "./menu-section";
-import { useState } from "react";
+import { useContext } from "react";
 import { removeAccents } from "@/lib/utils";
-import { InputSearch } from "./input-search";
+import { MenuContext } from "@/contexts/menu";
 
 
 type MenuProps = {
@@ -15,27 +15,18 @@ type MenuProps = {
 export const Menu = ({
     data
 }: MenuProps) => {
-    const [search, setSearch] = useState("")
-
+    const { searchDish } = useContext(MenuContext);
+    
     const filteredData = data.map(category => ({
         ...category,
         dishes: category.dishes.filter(dish =>
-            removeAccents(dish.name).includes(removeAccents(search)) ||
-            removeAccents(dish.description || '').includes(removeAccents(search))
+            removeAccents(dish.name).includes(removeAccents(searchDish)) ||
+            removeAccents(dish.description || '').includes(removeAccents(searchDish))
         )
     })).filter(category => category.dishes.length > 0);
 
     return ( 
         <>
-            <div className="mx-6 sm:mx-8 my-6">
-                <InputSearch 
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Buscar por um item"
-                    search={search}
-                    onClear={() => setSearch("")}
-                />
-            </div>
             <div className="mx-6 mt-4 sm:mx-8">            
                 {filteredData.length ? (
                     filteredData.map((category) => (
