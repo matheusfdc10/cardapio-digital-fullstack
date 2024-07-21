@@ -17,19 +17,25 @@ type Props = {
  
 }
 export const TabBar = ({}: Props) => {
-    const { setSearchDish } = useContext(MenuContext);
+    const { setSearchDish, searchDish } = useContext(MenuContext);
     const [inputSearchState, setInputSearchState] = useState(false);
     const cart = useCart();
 
     const handleInputSearchState = () => {
         setInputSearchState((prev) => !prev);
         setSearchDish("")
-        if (!inputSearchState) {
-            setTimeout(() => {
-                window.scrollTo({ top: 112, behavior: "smooth" });
-            }, 300);
-        }
+        // if (!inputSearchState) {
+        //     setTimeout(() => {
+        //         window.scrollTo({ top: 112, behavior: "smooth" });
+        //     }, 300);
+        // }
     }
+
+    useEffect(() => {
+        if (!inputSearchState) {
+            setInputSearchState(true)
+        }
+    }, [searchDish])
 
     return (
         <div className="sticky bottom-0 bg-white sm:hidden border-t divide-y">

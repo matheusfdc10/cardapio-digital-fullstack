@@ -14,6 +14,16 @@ export interface InputSearchProps extends React.InputHTMLAttributes<HTMLInputEle
 const InputSearch = React.forwardRef<HTMLInputElement, InputSearchProps>(
     ({ className, borderNone, ...props }, ref) => {
         const { searchDish, setSearchDish } = useContext(MenuContext);
+
+        const handleSearchDish = (value: React.ChangeEvent<HTMLInputElement>) => {
+            setSearchDish(value.target.value)
+            const viewportWidth = window.innerWidth;
+            if (viewportWidth < 640) {
+                window.scrollTo({ top: 112, behavior: "smooth" });
+            } else {
+                window.scrollTo({ top: 144, behavior: "smooth" });
+            }
+        }
         
         return ( 
             <div className="relative sm w-full flex items-center">
@@ -25,7 +35,7 @@ const InputSearch = React.forwardRef<HTMLInputElement, InputSearchProps>(
                         className
                     )}
                     value={searchDish}
-                    onChange={(e) => setSearchDish(e.target.value)}
+                    onChange={handleSearchDish}
                     ref={ref}
                     {...props}
                 
