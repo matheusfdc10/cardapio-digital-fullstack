@@ -51,7 +51,7 @@ export const TabBar = ({}: Props) => {
                         <p className="font-medium text-sm text-muted-foreground">
                             Total
                         </p>
-                        <span className="font-bold text-sm">
+                        <span className="font-semibold">
                             {formatPrice(cart.totalAmount)}
                         </span>
                         <span className="font-medium text-sm text-muted-foreground"> / {cart.totalItems} {cart.totalItems === 1 ? 'item' : 'itens'}</span>

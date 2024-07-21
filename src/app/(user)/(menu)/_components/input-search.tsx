@@ -2,7 +2,7 @@
 
 import { MenuContext } from "@/contexts/menu";
 import { cn } from "@/lib/utils";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { IoSearchOutline } from "react-icons/io5";
 import { TiDelete } from "react-icons/ti";
 
@@ -14,16 +14,41 @@ export interface InputSearchProps extends React.InputHTMLAttributes<HTMLInputEle
 const InputSearch = React.forwardRef<HTMLInputElement, InputSearchProps>(
     ({ className, borderNone, ...props }, ref) => {
         const { searchDish, setSearchDish } = useContext(MenuContext);
+        const inputRef = useRef<HTMLInputElement>(null);
 
         const handleSearchDish = (value: React.ChangeEvent<HTMLInputElement>) => {
             setSearchDish(value.target.value)
-            const viewportWidth = window.innerWidth;
-            if (viewportWidth < 640) {
-                window.scrollTo({ top: 112, behavior: "smooth" });
-            } else {
-                window.scrollTo({ top: 144, behavior: "smooth" });
-            }
         }
+
+        useEffect(() => {
+            if (searchDish) {
+                const adjustScrollPosition = () => {
+                    const viewportWidth = window.innerWidth;
+                    if (viewportWidth < 640) {
+                        window.scrollTo({ top: 112, behavior: "smooth" });
+                    } else {
+                        window.scrollTo({ top: 144, behavior: "smooth" });
+                    }
+                };
+    
+                const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    
+                // Verificar se a altura da viewport muda, indicando que o teclado foi aberto
+                const handleResize = () => {
+                    const newViewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+                    if (newViewportHeight !== viewportHeight) {
+                        adjustScrollPosition();
+                    }
+                };
+    
+                window.visualViewport?.addEventListener("resize", handleResize);
+                adjustScrollPosition();
+    
+                return () => {
+                    window.visualViewport?.removeEventListener("resize", handleResize);
+                };
+            }
+        }, [searchDish]);
         
         return ( 
             <div className="relative sm w-full flex items-center">
@@ -36,7 +61,7 @@ const InputSearch = React.forwardRef<HTMLInputElement, InputSearchProps>(
                     )}
                     value={searchDish}
                     onChange={handleSearchDish}
-                    ref={ref}
+                    ref={inputRef}
                     {...props}
                 
                 />
