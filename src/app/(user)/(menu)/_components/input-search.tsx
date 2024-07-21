@@ -8,54 +8,32 @@ import { TiDelete } from "react-icons/ti";
 
 export interface InputSearchProps extends React.InputHTMLAttributes<HTMLInputElement> {
     className?: string;
-    borderNone?: boolean
+    borderNone?: boolean;
+    buttonClearNone?: boolean
 }
 
 const InputSearch = React.forwardRef<HTMLInputElement, InputSearchProps>(
-    ({ className, borderNone, ...props }, ref) => {
+    ({ className, borderNone, buttonClearNone, ...props }, ref) => {
         const { searchDish, setSearchDish } = useContext(MenuContext);
         const inputRef = useRef<HTMLInputElement>(null);
 
         const handleSearchDish = (value: React.ChangeEvent<HTMLInputElement>) => {
             setSearchDish(value.target.value)
-        }
-
-        useEffect(() => {
-            if (searchDish) {
-                const adjustScrollPosition = () => {
-                    const viewportWidth = window.innerWidth;
-                    if (viewportWidth < 640) {
-                        window.scrollTo({ top: 112, behavior: "smooth" });
-                    } else {
-                        window.scrollTo({ top: 144, behavior: "smooth" });
-                    }
-                };
-    
-                const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-    
-                // Verificar se a altura da viewport muda, indicando que o teclado foi aberto
-                const handleResize = () => {
-                    const newViewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-                    if (newViewportHeight !== viewportHeight) {
-                        adjustScrollPosition();
-                    }
-                };
-    
-                window.visualViewport?.addEventListener("resize", handleResize);
-                adjustScrollPosition();
-    
-                return () => {
-                    window.visualViewport?.removeEventListener("resize", handleResize);
-                };
+            const viewportWidth = window.innerWidth;
+            if (viewportWidth < 640) {
+                window.scrollTo({ top: 112, behavior: "smooth" });
+            } else {
+                window.scrollTo({ top: 144, behavior: "smooth" });
             }
-        }, [searchDish]);
+        }
         
         return ( 
             <div className="relative sm w-full flex items-center">
                 <IoSearchOutline className="absolute left-3 w-6 h-6 text-gray-500" />
                 <input
                     className={cn(
-                        "w-full pl-12 pr-10 py-2 h-12 focus:border-none focus:outline-none",
+                        "w-full pl-12 py-2 h-12 focus:border-none focus:outline-none",
+                        !buttonClearNone ? 'pr-10' : 'pr-4',
                         borderNone ? "" : "rounded-md border focus:ring-2 focus:ring-gray-300",
                         className
                     )}
@@ -65,7 +43,7 @@ const InputSearch = React.forwardRef<HTMLInputElement, InputSearchProps>(
                     {...props}
                 
                 />
-                {!!searchDish.length && (
+                {!!searchDish.length && !buttonClearNone  && (
                     <TiDelete
                         onClick={() => setSearchDish("")}
                         className="absolute right-3 w-6 h-6 text-gray-400 cursor-pointer"

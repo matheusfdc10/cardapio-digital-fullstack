@@ -7,11 +7,12 @@ import { PiNotepad } from "react-icons/pi";
 import { RxHome } from "react-icons/rx";
 import Link from "next/link";
 import { InputSearch } from "./input-search";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useState } from "react";
 import { MenuContext } from "@/contexts/menu";
 import { Button } from "@/components/ui/button";
 import useCart from "@/hooks/useCart";
 import { formatPrice } from "@/lib/utils";
+import { TiDelete } from "react-icons/ti";
 
 type Props = {
  
@@ -24,24 +25,17 @@ export const TabBar = ({}: Props) => {
     const handleInputSearchState = () => {
         setInputSearchState((prev) => !prev);
         setSearchDish("")
-        // if (!inputSearchState) {
-        //     setTimeout(() => {
-        //         window.scrollTo({ top: 112, behavior: "smooth" });
-        //     }, 300);
-        // }
     }
-
-    useEffect(() => {
-        if (!inputSearchState) {
-            setInputSearchState(true)
-        }
-    }, [searchDish])
 
     return (
         <div className="sticky bottom-0 bg-white sm:hidden border-t divide-y">
-            {inputSearchState && (
-                <div className="px-3">
-                    <InputSearch autoFocus borderNone placeholder="Buscar por um item" />
+            {(inputSearchState || searchDish) && (
+                <div className="px-3 flex items-center">
+                    <InputSearch autoFocus borderNone buttonClearNone placeholder="Buscar por um item" />
+                    <TiDelete
+                        onClick={handleInputSearchState}
+                        className="mr-3 w-6 h-6 text-gray-400 cursor-pointer"
+                    />
                 </div>
             )}
 
