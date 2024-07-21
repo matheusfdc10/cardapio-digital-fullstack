@@ -15,7 +15,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = async ({
     }
     
     return (
-        <div className="max-w-screen-2xl min-h-screen mx-auto flex flex-col">
+        <div className="max-w-screen-2xl min-h-[100dvh] mx-auto flex flex-col">
             <MenuProvider restaurant={restaurant.data}>
                 {children}
             </MenuProvider>
