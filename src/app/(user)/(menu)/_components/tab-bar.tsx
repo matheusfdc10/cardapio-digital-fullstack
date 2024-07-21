@@ -24,6 +24,9 @@ export const TabBar = ({}: Props) => {
     const handleInputSearchState = () => {
         setInputSearchState((prev) => !prev);
         setSearchDish("")
+        if (!inputSearchState) {
+            window.scrollTo({ top: 112, behavior: "smooth" });
+        }
     }
 
     return (
