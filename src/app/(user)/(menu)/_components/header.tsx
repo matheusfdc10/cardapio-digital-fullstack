@@ -4,6 +4,7 @@ import Image from "next/image";
 import { cn, isOpenToday } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton"
 import { CartButton } from "./cart-button";
+import Cart from "./cart";
 
 interface HeaderProps {
     restaurant: RestaurantType;
@@ -54,8 +55,8 @@ export const Header: React.FC<HeaderProps> = ({
                     <div className="relative cursor-pointer sm:hover:scale-[1.03] sm:active:scale-100">
                     <FaUser className="w-6 h-6"/>
                     </div>
-
-                    <CartButton />
+                    <Cart />
+                    {/* <CartButton /> */}
                 </div>
             </div>
       </header>

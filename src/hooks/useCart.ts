@@ -73,8 +73,8 @@ const useCart = create(
       removeFromCart: (id) => set((state) => {
         const updatedCart = state.cart.filter(cartItem => cartItem.id !== id);
         const updatedTotalItems = updatedCart.reduce((acc, cartItem) => acc + cartItem.quantity, 0);
-        const updatedTotalAmount = updatedCart.reduce((acc, cartItem) => acc + (cartItem.price * cartItem.quantity) +
-          cartItem.additionalCategories.reduce((addAcc, category) =>
+        const updatedTotalAmount = updatedCart.reduce((acc, cartItem) => (cartItem.price * cartItem.quantity) + acc +
+        cartItem.quantity *  cartItem.additionalCategories.reduce((addAcc, category) =>
             addAcc + category.additionals.reduce((subAddAcc, additional) =>
               subAddAcc + (additional.price * additional.quantity), 0), 0), 0);
 
@@ -82,17 +82,23 @@ const useCart = create(
       }),
 
       updateItemFromCart: (item) => set((state) => {
-        const updatedCart = state.cart.map(cartItem =>
+        const updatedCart = state.cart.filter((cartItem) => {
+          if (cartItem.id === item.id) {
+            return item.quantity > 0 ? true : false
+          } else {
+            return true
+          }
+        }).map(cartItem =>
           cartItem.id === item.id
             ? item
             : cartItem
         );
 
         const updatedTotalItems = updatedCart.reduce((acc, cartItem) => acc + cartItem.quantity, 0);
-        const updatedTotalAmount = updatedCart.reduce((acc, cartItem) => acc + cartItem.price * cartItem.quantity +
-          cartItem.additionalCategories.reduce((addAcc, category) =>
+        const updatedTotalAmount = updatedCart.reduce((acc, cartItem) => (cartItem.price * cartItem.quantity) + acc +
+        cartItem.quantity *  cartItem.additionalCategories.reduce((addAcc, category) =>
             addAcc + category.additionals.reduce((subAddAcc, additional) =>
-              subAddAcc + additional.price * additional.quantity, 0), 0), 0);
+              subAddAcc + (additional.price * additional.quantity), 0), 0), 0);
 
         return { cart: updatedCart, totalItems: updatedTotalItems, totalAmount: updatedTotalAmount };
       }),

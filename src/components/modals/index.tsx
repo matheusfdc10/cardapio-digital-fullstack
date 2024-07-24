@@ -53,11 +53,11 @@ const Modal: React.FC<ModalProps> = ({
     if (!isOpen) return null;
 
     return (
-        <div className='fixed z-[50] w-screen h-[100dvh] top-0 left-0 right-0'>
+        <div className='fixed z-50 w-screen h-[100dvh] top-0 left-0 right-0'>
             <div 
                 className='relative w-full h-full bg-zinc-900/50 backdrop-blur-sm'
             >
-                <div className='fixed inset-0 z-10 overflow-y-auto'>
+                <div className='fixed inset-0 z-50 overflow-y-auto'>
                     <div
                         onClick={handleOutsideClick}
                         className={cn(
@@ -83,7 +83,7 @@ const Modal: React.FC<ModalProps> = ({
                                         pr-3 
                                         pt-3
                                         sm:block
-                                        z-10
+                                        z-50
                                     "
                                 >
                                     <button

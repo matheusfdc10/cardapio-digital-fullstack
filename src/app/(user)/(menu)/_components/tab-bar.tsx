@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import useCart from "@/hooks/useCart";
 import { formatPrice } from "@/lib/utils";
 import { TiDelete } from "react-icons/ti";
+import Cart from "./cart";
 
 type Props = {
  
@@ -28,7 +29,7 @@ export const TabBar = ({}: Props) => {
     }
 
     return (
-        <div className="sticky bottom-0 bg-white sm:hidden border-t divide-y">
+        <div className="sticky bottom-0 z-10 bg-white sm:hidden border-t divide-y">
             {(inputSearchState || searchDish) && (
                 <div className="px-3 flex items-center">
                     <InputSearch autoFocus borderNone buttonClearNone placeholder="Buscar por um item" />
@@ -50,9 +51,10 @@ export const TabBar = ({}: Props) => {
                         </span>
                         <span className="font-medium text-sm text-muted-foreground"> / {cart.totalItems} {cart.totalItems === 1 ? 'item' : 'itens'}</span>
                     </div>
-                    <Button size="sm">
+                    <Cart />
+                    {/* <Button size="sm">
                         Ver sacola
-                    </Button>
+                    </Button> */}
                 </div>
             )}
 

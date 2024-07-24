@@ -97,7 +97,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
     }, [handleTouchMove]);
 
     return (
-        <div className="sticky top-0 h-14 w-full bg-white z-50 border-b overflow-hidden">
+        <div className="sticky top-0 h-14 w-full bg-white z-10 border-b overflow-hidden">
             <div className='relative h-full'>
                 <div className="absolute w-10 h-full top-0 right-0 z-[51] bottom-0 bg-gradient-to-l from-white to-transparent" />
                 <div
