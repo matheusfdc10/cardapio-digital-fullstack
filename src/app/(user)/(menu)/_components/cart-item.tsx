@@ -35,7 +35,7 @@ export const CartItem = ({
             >
                 <div className="flex justify-between">
                     <span className="font-medium">
-                        {item.quantity} - {item.name}
+                        {item.quantity}x {item.name}
                     </span>
                     <span className="font-semibold ml-2">
                         {formatPrice(totalPrice(item))}
