@@ -17,6 +17,7 @@ export const {
 } = NextAuth({
     pages: {
         signIn: "/auth/login",
+        signOut: "/",
     },
     callbacks: {
         // async authorized({ auth, request: { nextUrl }}) {

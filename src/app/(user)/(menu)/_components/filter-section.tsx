@@ -3,6 +3,7 @@
 import { Link } from 'react-scroll/modules';
 import { useRef, useState, useCallback, useEffect } from "react";
 import { MenuType } from '@/types';
+import { cn } from '@/lib/utils';
 
 function debounce(func: (...args: any[]) => void, wait: number) {
     let timeout: NodeJS.Timeout;
@@ -96,8 +97,36 @@ const FilterSection: React.FC<FilterSectionProps> = ({
         }
     }, [handleTouchMove]);
 
+    const divRef = useRef<HTMLDivElement>(null);
+    const [isMaxTop, setIsMaxTop] = useState(true)
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                setIsMaxTop(entry?.intersectionRatio === 1); // True if fully in view
+            },
+            {
+                root: null, // observe the viewport
+                rootMargin: "0px 0px 0px 0px",
+                threshold: [1.0] // 1.0 means fully in view
+            }
+        );
+
+        if (divRef.current) {
+            observer.observe(divRef.current);
+        }
+
+        return () => {
+            if (divRef.current) {
+                observer.unobserve(divRef.current);
+            }
+        };
+    }, [divRef]);
+
     return (
-        <div className="sticky top-0 h-14 w-full bg-white z-10 border-b overflow-hidden">
+        <>
+        <div ref={divRef}/>
+        <div className={cn("sticky top-0 h-14 w-full bg-white z-10 border-b overflow-hidden", !isMaxTop && 'border-b-0 shadow-sm')}>
             <div className='relative h-full'>
                 <div className="absolute w-10 h-full top-0 right-0 z-[51] bottom-0 bg-gradient-to-l from-white to-transparent" />
                 <div
@@ -136,6 +165,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
                 </div>
             </div>
         </div>
+        </>
     );
 };
 

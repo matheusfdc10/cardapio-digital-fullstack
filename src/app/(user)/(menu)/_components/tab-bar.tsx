@@ -14,6 +14,7 @@ import useCart from "@/hooks/useCart";
 import { formatPrice } from "@/lib/utils";
 import { TiDelete } from "react-icons/ti";
 import Cart from "./cart";
+import User from "./user";
 
 type Props = {
  
@@ -83,12 +84,7 @@ export const TabBar = ({}: Props) => {
                     </span>
                 </div>
 
-                <div className="flex flex-col justify-center gap-1 items-center w-full py-2 cursor-pointer">
-                    <FaRegUser className="w-6 h-6" />
-                    <span className="font-semibold text-xs">
-                        Perfil
-                    </span>
-                </div>
+                <User isMobile />
             </div>
         </div>
     );

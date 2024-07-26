@@ -5,6 +5,7 @@ import { cn, isOpenToday } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton"
 import { CartButton } from "./cart-button";
 import Cart from "./cart";
+import User from "./user";
 
 interface HeaderProps {
     restaurant: RestaurantType;
@@ -52,11 +53,8 @@ export const Header: React.FC<HeaderProps> = ({
 
             <div className="hidden sm:block">
                 <div className="flex gap-6 mt-6 mr-5">
-                    <div className="relative cursor-pointer sm:hover:scale-[1.03] sm:active:scale-100">
-                    <FaUser className="w-6 h-6"/>
-                    </div>
+                    <User />
                     <Cart />
-                    {/* <CartButton /> */}
                 </div>
             </div>
       </header>

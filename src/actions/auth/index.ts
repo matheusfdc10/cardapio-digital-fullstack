@@ -86,7 +86,7 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
     }
 }
 
-export const logout = async (redirectUrl: string) => {
+export const logout = async (redirectUrl?: string) => {
     try {
         await signOut({
             redirectTo: redirectUrl
