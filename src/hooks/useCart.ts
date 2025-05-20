@@ -47,8 +47,9 @@ const useCart = create(
       totalItems: 0,
       totalAmount: 0,
       cartCreatedAt: date(),
+      
       addToCart: (item) => set((state) => {
-        const existingItemIndex = state.cart.findIndex(cartItem => cartItem.id === item.id);
+        const existingItemIndex = state.cart.findIndex(cartItem => cartItem.dishId === item.dishId);
 
         if (existingItemIndex >= 0) {
           toast({
@@ -70,8 +71,8 @@ const useCart = create(
         return { cart: updatedCart, totalItems: updatedTotalItems, totalAmount: updatedTotalAmount };
       }),
 
-      removeFromCart: (id) => set((state) => {
-        const updatedCart = state.cart.filter(cartItem => cartItem.id !== id);
+      removeFromCart: (dishId) => set((state) => {
+        const updatedCart = state.cart.filter(cartItem => cartItem.dishId !== dishId);
         const updatedTotalItems = updatedCart.reduce((acc, cartItem) => acc + cartItem.quantity, 0);
         const updatedTotalAmount = updatedCart.reduce((acc, cartItem) => (cartItem.price * cartItem.quantity) + acc +
         cartItem.quantity *  cartItem.additionalCategories.reduce((addAcc, category) =>
@@ -83,13 +84,13 @@ const useCart = create(
 
       updateItemFromCart: (item) => set((state) => {
         const updatedCart = state.cart.filter((cartItem) => {
-          if (cartItem.id === item.id) {
+          if (cartItem.dishId === item.dishId) {
             return item.quantity > 0 ? true : false
           } else {
             return true
           }
         }).map(cartItem =>
-          cartItem.id === item.id
+          cartItem.dishId === item.dishId
             ? item
             : cartItem
         );

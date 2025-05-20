@@ -12,7 +12,7 @@ const DishUpdate = DishSchema.extend({
     price: z.coerce.number().min(0.01).optional(),
     categoryId: z.string().min(1).optional(),
     additionalCategoryIds: z.string().array().optional(),
-}).omit({ createdAt: true, dishes: true, updatedAt: true })
+}).omit({ createdAt: true, updatedAt: true })
 
 
 const DishCreate = DishSchema.extend({

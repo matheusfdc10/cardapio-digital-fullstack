@@ -1,12 +1,14 @@
 "use client"
 
-import Modal from "@/components/modals";
 import { Button } from "@/components/ui/button";
 import useCart, { CartItemType } from "@/hooks/useCart";
 import { formatPrice } from "@/lib/utils";
 import { useState } from "react";
 import CartForm from "./cart-form";
 import { IoMdAdd, IoMdRemove } from "react-icons/io";
+import { getDishById } from "@/actions/admin/dish";
+import { MenuType } from "@/types";
+import { ResponsiveModal } from "@/components/modals/responsive-modal";
 
 type Props = {
     item: CartItemType
@@ -15,21 +17,32 @@ export const CartItem = ({
     item
 }: Props) => {
     const cart = useCart()
-    // const [modalState, setModalState] = useState(false)
+    const [modalState, setModalState] = useState(false)
+    const [dish, setDish] = useState<MenuType['dishes'][number] | null>(null);
 
     const totalPrice = (item: CartItemType) => {
         return (item.additionalCategories.reduce((value, category) => value + category.additionals.reduce((value2, additonal) => value2 + (additonal.quantity ? additonal.quantity * additonal.price : 0),0), 0) + item.price) * item.quantity
     }
 
+    const updateDish = async () => {
+        setModalState(false);
+        const response = await getDishById(item.id);
+        
+        if (response.success) {
+            setDish(response.data)
+            setModalState(true);
+        }
+    }
+
     return (
         <>
-            {/* <Modal
-                onClose={() => setModalState(false)}
-                isOpen={modalState}
-                smFull
+            <ResponsiveModal
+                onOpenChange={setModalState}
+                open={modalState}
+                paddingNone
             >
-                <CartForm dish={} initialData={item} onClose={() => setModalState(false)}/>
-            </Modal> */}
+                <CartForm dish={dish!} initialData={item} onClose={() => setModalState(false)}/>
+            </ResponsiveModal>
             <li 
                 className="space-y-1 py-2"
             >
@@ -76,12 +89,13 @@ export const CartItem = ({
                         </button>
                     </div>
                     <div className="space-x-2">
-                        {/* <Button
+                        <Button
+                            onClick={updateDish}
                             size="sm"
                             variant="secondary"
                         >
                             Editar
-                        </Button> */}
+                        </Button>
                         <Button
                             onClick={() => cart.removeFromCart(item.id)}
                             size="sm"

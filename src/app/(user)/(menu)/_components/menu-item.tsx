@@ -6,6 +6,7 @@ import { formatPrice } from "@/lib/utils";
 import { MenuType } from "@/types";
 import CartForm from "./cart-form";
 import { useState } from "react";
+import { ResponsiveModal } from "@/components/modals/responsive-modal";
 
 type MenuItemProps = {
     data: MenuType['dishes'][number]
@@ -16,17 +17,15 @@ export const MenuItem = ({
 }: MenuItemProps) => {
     const [modalState, setModalState] = useState(false)
 
-
-
     return (
         <>  
-            <Modal
-                onClose={() => setModalState(false)}
-                isOpen={modalState}
-                smFull
+            <ResponsiveModal
+                onOpenChange={setModalState}
+                open={modalState}
+                paddingNone
             >
                 <CartForm dish={data} onClose={() => setModalState(false)}/>
-            </Modal>
+            </ResponsiveModal>
             <li
                 onClick={() => setModalState(true)}
                 className="min-h-[146px] cursor-pointer border rounded-md p-4 flex justify-between gap-4 shadow-md hover:border-neutral-300/80 hover:shadow-lg transition overflow-hidden"

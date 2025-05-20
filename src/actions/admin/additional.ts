@@ -15,7 +15,7 @@ const AdditionalUpdate = AdditionalSchema.extend({
 
 const AdditionalCreate = AdditionalSchema.extend({
     status: z.boolean().optional()
-}).omit({ id: true, createdAt: true, order: true, updatedAt: true, })
+}).omit({ id: true, createdAt: true, updatedAt: true, })
 
 
 export const getAdditionals = async () => {

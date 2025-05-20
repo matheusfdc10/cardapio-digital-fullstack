@@ -16,7 +16,7 @@ import { Heading } from "@/components/ui/heading";
 import Modal from "@/components/modals";
 import { useState } from "react";
 
-const formSchema = AddressSchema.omit({ id: true, updatedAt:true, createdAt: true, addressId: true, userId: true });
+const formSchema = AddressSchema.omit({ id: true, updatedAt:true, createdAt: true, userId: true });
 
 export type AddressFormValues = z.infer<typeof formSchema>;
 

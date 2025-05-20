@@ -14,6 +14,8 @@ import { FaCheck } from "react-icons/fa6";
 import { toast } from "@/components/ui/use-toast";
 import Image from '@/components/image';
 import useCart from "@/hooks/useCart";
+import { DialogClose } from "@/components/ui/dialog";
+import { v4 as uuidv4 } from 'uuid';
 
 const CartAdditionalSchema = z.object({
   id: z.string(),
@@ -151,8 +153,8 @@ const CartForm: React.FC<CartFormProps> = ({
   const form = useForm<CartType>({
     resolver: zodResolver(CartItemSchema),
     defaultValues: initialData || {
-      id: crypto.randomUUID(),
-      dishId: dish.id,
+      dishId: uuidv4(),
+      id: dish.id,
       name: dish.name,
       url: dish.image || undefined,
       price: dish.price,
@@ -339,9 +341,9 @@ const CartForm: React.FC<CartFormProps> = ({
         >
           <div className='sticky top-0 z-40 bg-white'>
             <div className='relative w-full h-14 flex justify-center items-center'>
-              <div onClick={onClose} className='absolute left-5 cursor-pointer'>
+              <DialogClose className='absolute left-5 cursor-pointer'>
                 <IoIosArrowBack className='w-6 h-6' />
-              </div>
+              </DialogClose>
               <h1 className='text-center text-sm sm:text-base font-semibold uppercase mx-14'>
                 {dish.name}
               </h1>
@@ -349,7 +351,7 @@ const CartForm: React.FC<CartFormProps> = ({
           </div>
 
           {dish.image && (
-            <div className='relative h-60 w-full sm:h-48 sm:w-96 overflow-hidden mx-auto sm:rounded-lg'>
+            <div className='relative h-60 w-full overflow-hidden'>
               <Image
                 src={dish.image}
                 alt={dish.name}
@@ -373,13 +375,13 @@ const CartForm: React.FC<CartFormProps> = ({
 
           {/* ADDITIONALS */}
           {!!form.watch('additionalCategories').length && (
-            <ul className='sm:max-h-[356px] sm:overflow-y-auto border-b '>
+            <ul className='border-b '>
               {form.watch('additionalCategories').map((category, indexCategory) => (
                 <li 
                   key={category.id} 
                   className="relative"
                 >
-                  <div className="sticky top-[56px] z-30 sm:static py-3 px-4 sm:px-8 bg-zinc-200 flex flex-col justify-between">
+                  <div className="sticky top-[56px] z-30 py-3 px-4 sm:px-8 bg-zinc-200 flex flex-col justify-between">
                     <FormField
                       control={form.control}
                       name={`additionalCategories.${indexCategory}`}
@@ -559,7 +561,7 @@ const CartForm: React.FC<CartFormProps> = ({
                 !!Object.keys(form.formState.errors).length && 'opacity-50'
               )}
             >
-              Adicionar • {formatPrice(totalPrice)}
+              {initialData ? "Atualizar • " : "Adicionar • "}{formatPrice(totalPrice)}
             </Button>
           </div>
         </form>

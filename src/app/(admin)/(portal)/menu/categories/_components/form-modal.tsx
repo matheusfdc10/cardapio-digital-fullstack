@@ -17,7 +17,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-const formSchema = DishCategorySchema.omit({ id: true, order:true, dishes:true, updatedAt:true, createdAt: true, description: true });
+const formSchema = DishCategorySchema.omit({ id: true, order:true, updatedAt:true, createdAt: true});
 
 export type DishCategoryFormValues = z.infer<typeof formSchema>;
 

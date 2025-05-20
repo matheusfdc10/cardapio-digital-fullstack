@@ -24,12 +24,12 @@ import { z } from "zod";
 const DishCategoryUpdate = DishCategorySchema.extend({
     status: z.boolean().optional(),
     name: z.string().optional()
-}).omit({ createdAt: true, dishes: true, updatedAt: true })
+}).omit({ createdAt: true, updatedAt: true })
 
 
 const DishCategoryCreate = DishCategorySchema.extend({
     status: z.boolean().optional()
-}).omit({ id: true, createdAt: true, dishes: true, order: true, updatedAt: true, description: true })
+}).omit({ id: true, createdAt: true, order: true, updatedAt: true })
 
 
 export const getDishCategories = async () => {

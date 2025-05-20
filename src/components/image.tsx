@@ -4,6 +4,9 @@ import React, { useState } from "react";
 import Img from "next/image"
 import { cn } from "@/lib/utils";
 import Modal from "@/components/modals";
+import { ResponsiveModal } from "./modals/responsive-modal";
+import { DialogClose } from "./ui/dialog";
+import { XIcon } from "lucide-react";
 
 interface ImageProps {
     src: string;
@@ -30,18 +33,22 @@ const Image: React.FC<ImageProps> = ({
     return (
         <>  
             {modal && (
-                <Modal
-                    isOpen={modalState}
-                    onClose={() => setModalState(false)}
-                    image
+                <ResponsiveModal
+                    open={modalState}
+                    onOpenChange={setModalState}
+                    paddingNone
                 >
+                    <DialogClose className="absolute p-1 bg-white shadow-sm top-2 right-2 rounded-full">
+                        <XIcon className=""/>
+                    </DialogClose>
                     <Image 
                         src={isLoading ? "/images/loading.jpg" : src }
                         alt={alt}
-                        width={680}
-                        height={680}
+                        width={500}
+                        height={500}
+                        className="object-cover bg-white w-full aspect-square"
                     />
-                </Modal>
+                </ResponsiveModal>
             )}
 
             {fill ? (
@@ -52,7 +59,7 @@ const Image: React.FC<ImageProps> = ({
                     fill
                     onLoadingComplete={() => setIsLoading(false)}
                     className={cn(
-                        "object-cover bg-white",
+                        "object-cover bg-white w-full aspect-square",
                         isLoading && "animate-spin",
                         modal && "cursor-pointer",
                         className,
@@ -66,7 +73,7 @@ const Image: React.FC<ImageProps> = ({
                     height={height}
                     onLoadingComplete={() => setIsLoading(false)}
                     className={cn(
-                        "object-cover bg-white",
+                        "object-cover bg-white w-full aspect-square",
                         isLoading && "animate-spin",
                         className,
                     )}
