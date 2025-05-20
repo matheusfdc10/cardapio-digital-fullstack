@@ -97,7 +97,7 @@ export const CartItem = ({
                             Editar
                         </Button>
                         <Button
-                            onClick={() => cart.removeFromCart(item.id)}
+                            onClick={() => cart.removeFromCart(item.dishId)}
                             size="sm"
                             variant="destructive"
                         >
